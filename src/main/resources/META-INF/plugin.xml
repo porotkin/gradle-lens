@@ -1,0 +1,25 @@
+<idea-plugin>
+    <id>com.github.porotkin.gradlelens</id>
+    <name>Gradle Lens</name>
+    <vendor url="https://github.com/porotkin">porotkin</vendor>
+
+    <!-- language=HTML -->
+    <description><![CDATA[
+        Shows the Gradle <code>description</code> of a module next to its folder in the Project view.
+        ]]></description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>com.intellij.gradle</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <projectViewNodeDecorator implementation="gradlelens.description.ModuleDescriptionDecorator"/>
+    </extensions>
+
+    <actions>
+        <action id="com.github.porotkin.gradlelens.ToggleModuleDescriptions"
+                class="gradlelens.description.ToggleModuleDescriptionsAction"
+                text="Module Descriptions">
+            <add-to-group group-id="ProjectView.ToolWindow.Appearance.Actions"/>
+        </action>
+    </actions>
+</idea-plugin>
