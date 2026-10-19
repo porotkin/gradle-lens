@@ -19,6 +19,7 @@ dependencies {
 
 kotlin {
     jvmToolchain(21)
+    compilerOptions.jvmDefault = org.jetbrains.kotlin.gradle.dsl.JvmDefaultMode.NO_COMPATIBILITY
 }
 
 intellijPlatform {
