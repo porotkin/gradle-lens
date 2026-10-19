@@ -1,4 +1,4 @@
-<idea-plugin>
+<idea-plugin url="https://github.com/porotkin/gradle-lens">
     <id>com.github.porotkin.gradlelens</id>
     <name>Gradle Lens</name>
     <vendor url="https://github.com/porotkin">porotkin</vendor>
@@ -6,7 +6,15 @@
     <!-- language=HTML -->
     <description><![CDATA[
         Shows the Gradle <code>description</code> of a module next to its folder in the Project view.
+        <ul>
+            <li>Toggle on or off: Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b>.</li>
+        </ul>
+        <p><a href="https://github.com/porotkin/gradle-lens/issues">Report an issue</a></p>
         ]]></description>
+
+    <change-notes><![CDATA[
+        <p>Initial release: Gradle module descriptions in the Project view.</p>
+        ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.gradle</depends>
