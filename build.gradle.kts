@@ -29,6 +29,9 @@ intellijPlatform {
             untilBuild = provider { null }
         }
     }
+    publishing {
+        token = providers.gradleProperty("intellijPublishToken")
+    }
 }
 
 tasks.wrapper {
