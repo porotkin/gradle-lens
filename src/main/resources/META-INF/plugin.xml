@@ -21,7 +21,13 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="gradlelens.description.ModuleDescriptionDecorator"/>
+        <postStartupActivity implementation="gradlelens.description.RefreshOnGradleDataLoaded"/>
     </extensions>
+
+    <projectListeners>
+        <listener class="gradlelens.description.RefreshOnGradleSync"
+                  topic="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener"/>
+    </projectListeners>
 
     <actions>
         <action id="com.github.porotkin.gradlelens.ToggleModuleDescriptions"
