@@ -9,9 +9,13 @@ import org.jetbrains.plugins.gradle.util.GradleConstants
 
 class ModuleDescriptionDecorator : ProjectViewNodeDecorator {
     override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
-        if (!moduleDescriptionsEnabled) return
+        val mode = moduleDescriptionsMode
+        if (mode == ModuleDescriptionsMode.NONE) return
         val project = node.project ?: return
         val directory = (node as? PsiDirectoryNode)?.virtualFile ?: return
+        if (mode == ModuleDescriptionsMode.SELECTED && directory !in project.getUserData(SELECTED_FILES)
+                .orEmpty()
+        ) return
 
         val description = ExternalSystemApiUtil.findModuleNode(
             project,

@@ -7,7 +7,9 @@
     <description><![CDATA[
         Shows the Gradle <code>description</code> of a module next to its folder in the Project view.
         <ul>
-            <li>Toggle on or off: Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b>.</li>
+            <li>Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b>: <b>All Modules</b>, <b>Selected
+                Modules</b> or <b>None</b>.
+            </li>
         </ul>
         <p><a href="https://github.com/porotkin/gradle-lens/issues">Report an issue</a></p>
         ]]></description>
@@ -27,13 +29,22 @@
     <projectListeners>
         <listener class="gradlelens.description.RefreshOnGradleSync"
                   topic="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener"/>
+        <listener class="gradlelens.description.RefreshOnSelectionChange"
+                  topic="com.intellij.ide.projectView.impl.ProjectViewListener"/>
     </projectListeners>
 
     <actions>
-        <action id="com.github.porotkin.gradlelens.ToggleModuleDescriptions"
-                class="gradlelens.description.ToggleModuleDescriptionsAction"
-                text="Module Descriptions">
+        <group id="com.github.porotkin.gradlelens.ModuleDescriptions" text="Module Descriptions" popup="true">
             <add-to-group group-id="ProjectView.ToolWindow.Appearance.Actions"/>
-        </action>
+            <action id="com.github.porotkin.gradlelens.ShowAllModuleDescriptions"
+                    class="gradlelens.description.ShowAllModuleDescriptionsAction"
+                    text="All Modules"/>
+            <action id="com.github.porotkin.gradlelens.ShowSelectedModuleDescriptions"
+                    class="gradlelens.description.ShowSelectedModuleDescriptionsAction"
+                    text="Selected Modules"/>
+            <action id="com.github.porotkin.gradlelens.HideModuleDescriptions"
+                    class="gradlelens.description.HideModuleDescriptionsAction"
+                    text="None"/>
+        </group>
     </actions>
 </idea-plugin>

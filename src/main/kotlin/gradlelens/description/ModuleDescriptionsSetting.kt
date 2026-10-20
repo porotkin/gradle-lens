@@ -2,10 +2,20 @@ package gradlelens.description
 
 import com.intellij.ide.util.PropertiesComponent
 
-private const val KEY = "gradle-lens.module-descriptions.enabled"
+enum class ModuleDescriptionsMode {
+    ALL,
+    SELECTED,
+    NONE,
+}
 
-var moduleDescriptionsEnabled: Boolean
-    get() = PropertiesComponent.getInstance()
-        .getBoolean(KEY, true)
+private const val MODE_KEY = "gradle-lens.module-descriptions.mode"
+private const val LEGACY_ENABLED_KEY = "gradle-lens.module-descriptions.enabled"
+
+var moduleDescriptionsMode: ModuleDescriptionsMode
+    get() = PropertiesComponent.getInstance().run {
+        val stored = getValue(MODE_KEY)
+        ModuleDescriptionsMode.entries.find { it.name == stored }
+            ?: if (getBoolean(LEGACY_ENABLED_KEY, true)) ModuleDescriptionsMode.ALL else ModuleDescriptionsMode.NONE
+    }
     set(value) = PropertiesComponent.getInstance()
-        .setValue(KEY, value, true)
+        .setValue(MODE_KEY, value.name)
