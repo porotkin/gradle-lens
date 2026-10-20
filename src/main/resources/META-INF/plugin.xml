@@ -15,7 +15,12 @@
         ]]></description>
 
     <change-notes><![CDATA[
-        <p>Initial release: Gradle module descriptions in the Project view.</p>
+        <ul>
+            <li>New <b>Selected Modules</b> mode: Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b> is
+                now a submenu with <b>All Modules</b>, <b>Selected Modules</b> and <b>None</b>.
+            </li>
+            <li>Descriptions now refresh after a Gradle sync and when the project opens.</li>
+        </ul>
         ]]></change-notes>
 
     <depends>com.intellij.modules.platform</depends>
