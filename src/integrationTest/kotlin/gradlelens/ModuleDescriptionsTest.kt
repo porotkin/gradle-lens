@@ -22,7 +22,7 @@ import kotlin.time.Duration.Companion.minutes
 class ModuleDescriptionsTest {
     @Test
     fun showsModuleDescriptionInProjectView() {
-        val project = createTempDirectory("gradle-lens-integration-test").toRealPath()
+        val project = createTempDirectory("gradle-lens-integration-test")
         File("src/integrationTest/projects/multi-module").copyRecursively(project.toFile())
 
         val result = Starter.newContext(

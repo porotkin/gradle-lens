@@ -12,6 +12,7 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.AppExecutorUtil
+import gradlelens.findGradleModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.plugins.gradle.util.gradleIdentityPathOrNull
 import org.jetbrains.plugins.gradle.util.gradlePathOrNull
@@ -22,7 +23,7 @@ class ModuleDependenciesDocumentationProvider : DocumentationProvider, ExternalD
         originalElement: PsiElement?,
     ): String? {
         val directory = element as? PsiDirectory ?: return null
-        val module = findGradleModule(directory) ?: return null
+        val module = findGradleModule(directory.project, directory.virtualFile) ?: return null
         val path = module.gradleIdentityPathOrNull ?: return null
         val dependents = dependentsOf(module, gradleModules(directory.project))
         return renderDoc(path, module.gradlePathOrNull ?: path, dependents)

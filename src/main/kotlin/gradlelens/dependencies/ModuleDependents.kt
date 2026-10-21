@@ -6,7 +6,6 @@ import com.intellij.openapi.externalSystem.model.project.ModuleData
 import com.intellij.openapi.externalSystem.service.project.ProjectDataManager
 import com.intellij.openapi.externalSystem.util.ExternalSystemApiUtil
 import com.intellij.openapi.project.Project
-import com.intellij.psi.PsiDirectory
 import org.jetbrains.plugins.gradle.model.data.GradleProjectBuildScriptData
 import org.jetbrains.plugins.gradle.util.GradleConstants
 import org.jetbrains.plugins.gradle.util.gradleIdentityPathOrNull
@@ -16,9 +15,6 @@ data class Dependent(
     val gradlePath: String,
     val buildScript: File?,
 )
-
-fun findGradleModule(directory: PsiDirectory): ModuleData? =
-    ExternalSystemApiUtil.findModuleNode(directory.project, GradleConstants.SYSTEM_ID, directory.virtualFile.path)?.data
 
 fun gradleModules(project: Project): Sequence<DataNode<ModuleData>> =
     ProjectDataManager.getInstance()
