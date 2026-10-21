@@ -300,7 +300,11 @@ private fun IdeaFrameUI.moduleDescriptionsMode(mode: String): PopupItemUiCompone
 
 private fun IdeaFrameUI.menuItem(text: String): PopupItemUiComponent =
     driver.ui.x(PopupItemUiComponent::class.java) {
-        and(or(byClass("ActionMenu"), byClass("ActionMenuItem")), byText(text))
+        and(
+            or(byClass("ActionMenu"), byClass("ActionMenuItem")),
+            byText(text),
+            not("ancestor::div[${byClass("ActionMenu")}]"),
+        )
     }
 
 private fun IdeaFrameUI.contextMenuItems(vararg path: String): List<String> {

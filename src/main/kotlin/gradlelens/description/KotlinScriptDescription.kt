@@ -67,7 +67,7 @@ private fun KtBlockExpression.addStatement(
 }
 
 private fun PsiElement.deleteWithSurroundingWhitespace() {
-    (nextSibling as? PsiWhiteSpace ?: prevSibling as? PsiWhiteSpace)?.delete()
+    (prevSibling as? PsiWhiteSpace ?: nextSibling as? PsiWhiteSpace)?.delete()
     delete()
 }
 
