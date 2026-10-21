@@ -34,7 +34,6 @@ intellijPlatformTesting.testIdeUi.register(integrationTest.name) {
     task {
         testClassesDirs = integrationTest.output.classesDirs
         classpath = integrationTest.runtimeClasspath
-        javaLauncher = javaToolchains.launcherFor { languageVersion = JavaLanguageVersion.of(25) }
         useJUnitPlatform { excludeEngines("junit-vintage") }
     }
 }
