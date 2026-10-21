@@ -14,6 +14,7 @@ dependencies {
     intellijPlatform {
         intellijIdea("2026.2.3")
         bundledPlugin("com.intellij.gradle")
+        bundledPlugin("org.jetbrains.plugins.gradle")
     }
 }
 

@@ -25,10 +25,12 @@
 
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.gradle</depends>
+    <depends>org.jetbrains.plugins.gradle</depends>
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="gradlelens.description.ModuleDescriptionDecorator"/>
         <postStartupActivity implementation="gradlelens.description.RefreshOnGradleDataLoaded"/>
+        <documentationProvider implementation="gradlelens.dependencies.ModuleDependenciesDocumentationProvider"/>
     </extensions>
 
     <projectListeners>
