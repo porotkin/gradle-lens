@@ -1,0 +1,28 @@
+name: Test
+
+on:
+  push:
+    branches: [ '**' ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: |
+            25
+            21
+      - uses: gradle/actions/setup-gradle@v6
+      - uses: actions/cache@v6
+        with:
+          path: out/ide-tests/installers
+          key: ide-installer-${{ hashFiles('gradle/libs.versions.toml') }}
+      - run: xvfb-run -a -s "-screen 0 1920x1080x24" ./gradlew check integrationTest
+      - if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: ide-tests
+          path: out/ide-tests/tests
