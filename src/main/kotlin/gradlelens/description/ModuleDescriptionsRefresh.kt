@@ -4,7 +4,11 @@ import com.intellij.ide.projectView.ProjectView
 import com.intellij.ide.projectView.ProjectViewNode
 import com.intellij.ide.projectView.impl.AbstractProjectViewPane
 import com.intellij.ide.projectView.impl.ProjectViewListener
+import com.intellij.openapi.Disposable
 import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.application.EDT
+import com.intellij.openapi.components.Service
+import com.intellij.openapi.components.service
 import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
 import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
@@ -12,15 +16,22 @@ import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.tree.TreeUtil
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import javax.swing.JTree
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
 
 class RefreshOnGradleDataLoaded : ProjectActivity {
-    override suspend fun execute(project: Project) =
+    override suspend fun execute(project: Project) {
+        withContext(Dispatchers.EDT) {
+            ProjectView.getInstance(project).currentProjectViewPane?.tree
+                ?.let(project.service<ProjectViewSelection>()::attach)
+        }
         ExternalProjectsManager.getInstance(project).runWhenInitialized {
             refreshProjectView(project)
         }
+    }
 }
 
 class RefreshOnGradleSync(private val project: Project) : ProjectDataImportListener {
@@ -36,11 +47,24 @@ private fun refreshProjectView(project: Project) =
 
 val SELECTED_FILES = Key.create<Set<VirtualFile>>("gradle-lens.project-view.selected-files")
 
-class RefreshOnSelectionChange(private val project: Project) : ProjectViewListener, TreeSelectionListener {
+class RefreshOnSelectionChange(private val project: Project) : ProjectViewListener {
     override fun paneShown(current: AbstractProjectViewPane, previous: AbstractProjectViewPane?) {
-        val tree = current.tree ?: return
-        tree.removeTreeSelectionListener(this)
+        current.tree?.let(project.service<ProjectViewSelection>()::attach)
+    }
+}
+
+@Service(Service.Level.PROJECT)
+class ProjectViewSelection(private val project: Project) : TreeSelectionListener, Disposable {
+    private var tree: JTree? = null
+
+    fun attach(tree: JTree) {
+        this.tree?.removeTreeSelectionListener(this)
         tree.addTreeSelectionListener(this)
+        this.tree = tree
+    }
+
+    override fun dispose() {
+        tree?.removeTreeSelectionListener(this)
     }
 
     override fun valueChanged(e: TreeSelectionEvent) {
