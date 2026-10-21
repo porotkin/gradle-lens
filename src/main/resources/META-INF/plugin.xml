@@ -37,13 +37,16 @@
 
     <extensions defaultExtensionNs="com.intellij">
         <projectViewNodeDecorator implementation="gradlelens.description.ModuleDescriptionDecorator"/>
-        <postStartupActivity implementation="gradlelens.description.RefreshOnGradleDataLoaded"/>
+        <postStartupActivity implementation="gradlelens.model.LoadGradleModelOnStartup"/>
+        <postStartupActivity implementation="gradlelens.description.AttachProjectViewSelection"/>
         <documentationProvider implementation="gradlelens.dependencies.ModuleDependenciesDocumentationProvider"/>
     </extensions>
 
     <projectListeners>
-        <listener class="gradlelens.description.RefreshOnGradleSync"
+        <listener class="gradlelens.model.ReloadGradleModelOnSync"
                   topic="com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener"/>
+        <listener class="gradlelens.description.RefreshOnModulesChanged"
+                  topic="gradlelens.model.GradleModulesListener"/>
         <listener class="gradlelens.description.RefreshOnSelectionChange"
                   topic="com.intellij.ide.projectView.impl.ProjectViewListener"/>
     </projectListeners>

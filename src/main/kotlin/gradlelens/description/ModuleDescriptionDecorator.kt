@@ -4,7 +4,8 @@ import com.intellij.ide.projectView.PresentationData
 import com.intellij.ide.projectView.ProjectViewNode
 import com.intellij.ide.projectView.ProjectViewNodeDecorator
 import com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode
-import gradlelens.findGradleModule
+import com.intellij.openapi.components.service
+import gradlelens.model.LocalGradleModel
 
 class ModuleDescriptionDecorator : ProjectViewNodeDecorator {
     override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
@@ -16,7 +17,7 @@ class ModuleDescriptionDecorator : ProjectViewNodeDecorator {
                 .orEmpty()
         ) return
 
-        val description = findGradleModule(project, directory)?.description ?: return
+        val description = project.service<LocalGradleModel>().modules.find(directory)?.description ?: return
 
         data.locationString = description
     }

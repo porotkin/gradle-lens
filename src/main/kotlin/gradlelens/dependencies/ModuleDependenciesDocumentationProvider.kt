@@ -5,6 +5,7 @@ import com.intellij.lang.documentation.DocumentationProvider
 import com.intellij.lang.documentation.ExternalDocumentationHandler
 import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
+import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
@@ -12,10 +13,9 @@ import com.intellij.psi.PsiDirectory
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiManager
 import com.intellij.util.concurrency.AppExecutorUtil
-import gradlelens.findGradleModule
+import gradlelens.model.GradleModule
+import gradlelens.model.LocalGradleModel
 import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.plugins.gradle.util.gradleIdentityPathOrNull
-import org.jetbrains.plugins.gradle.util.gradlePathOrNull
 
 class ModuleDependenciesDocumentationProvider : DocumentationProvider, ExternalDocumentationHandler {
     override fun generateDoc(
@@ -23,10 +23,9 @@ class ModuleDependenciesDocumentationProvider : DocumentationProvider, ExternalD
         originalElement: PsiElement?,
     ): String? {
         val directory = element as? PsiDirectory ?: return null
-        val module = findGradleModule(directory.project, directory.virtualFile) ?: return null
-        val path = module.gradleIdentityPathOrNull ?: return null
-        val dependents = dependentsOf(module, gradleModules(directory.project))
-        return renderDoc(path, module.gradlePathOrNull ?: path, dependents)
+        val modules = directory.project.service<LocalGradleModel>().modules
+        val module = modules.find(directory.virtualFile) ?: return null
+        return renderDoc(module, modules.dependentsOf(module))
     }
 
     override fun handleExternalLink(
@@ -46,22 +45,21 @@ class ModuleDependenciesDocumentationProvider : DocumentationProvider, ExternalD
 }
 
 private fun renderDoc(
-    path: String,
-    declaredAs: String,
-    dependents: List<Dependent>,
+    module: GradleModule,
+    dependents: List<GradleModule>,
 ): String =
-    DEFINITION_START + path + DEFINITION_END +
+    DEFINITION_START + module.identityPath + DEFINITION_END +
             SECTIONS_START + SECTION_HEADER_START + "Used by:" + SECTION_SEPARATOR +
-            dependents.joinToString("<br>") { renderDependent(it, declaredAs) }.ifEmpty { "No modules" } +
+            dependents.joinToString("<br>") { renderDependent(it, module.path) }.ifEmpty { "No modules" } +
             SECTION_END + SECTIONS_END
 
 private fun renderDependent(
-    dependent: Dependent,
+    dependent: GradleModule,
     declaredAs: String,
 ): String =
     dependent.buildScript
-        ?.let { """<a href="${UsageLink(declaredAs, it.path).encode()}">${dependent.gradlePath}</a>""" }
-        ?: dependent.gradlePath
+        ?.let { """<a href="${UsageLink(declaredAs, it.path).encode()}">${dependent.identityPath}</a>""" }
+        ?: dependent.identityPath
 
 private fun declarationOffset(
     psiManager: PsiManager,

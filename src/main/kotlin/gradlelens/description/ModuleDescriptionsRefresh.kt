@@ -9,41 +9,34 @@ import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.application.EDT
 import com.intellij.openapi.components.Service
 import com.intellij.openapi.components.service
-import com.intellij.openapi.externalSystem.service.project.manage.ExternalProjectsManager
-import com.intellij.openapi.externalSystem.service.project.manage.ProjectDataImportListener
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.startup.ProjectActivity
 import com.intellij.openapi.util.Key
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.util.ui.tree.TreeUtil
+import gradlelens.model.GradleModulesListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.swing.JTree
 import javax.swing.event.TreeSelectionEvent
 import javax.swing.event.TreeSelectionListener
 
-class RefreshOnGradleDataLoaded : ProjectActivity {
+class AttachProjectViewSelection : ProjectActivity {
     override suspend fun execute(project: Project) {
         withContext(Dispatchers.EDT) {
             ProjectView.getInstance(project).currentProjectViewPane?.tree
                 ?.let(project.service<ProjectViewSelection>()::attach)
         }
-        ExternalProjectsManager.getInstance(project).runWhenInitialized {
-            refreshProjectView(project)
-        }
     }
 }
 
-class RefreshOnGradleSync(private val project: Project) : ProjectDataImportListener {
-    override fun onImportFinished(projectPath: String?) =
-        refreshProjectView(project)
+class RefreshOnModulesChanged(private val project: Project) : GradleModulesListener {
+    override fun modulesChanged() =
+        ApplicationManager.getApplication().invokeLater(
+            { ProjectView.getInstance(project).refresh() },
+            project.disposed,
+        )
 }
-
-private fun refreshProjectView(project: Project) =
-    ApplicationManager.getApplication().invokeLater(
-        { ProjectView.getInstance(project).refresh() },
-        project.disposed,
-    )
 
 val SELECTED_FILES = Key.create<Set<VirtualFile>>("gradle-lens.project-view.selected-files")
 
