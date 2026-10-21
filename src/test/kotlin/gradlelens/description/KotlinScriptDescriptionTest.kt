@@ -77,6 +77,25 @@ class KotlinScriptDescriptionTest : BuildFileTestCase() {
             """,
         )
 
+    fun testRemovesClearedLastDescriptionKeepingTrailingNewline() =
+        assertWritten(
+            """
+                plugins {
+                    java
+                }
+
+                description = "Old"
+
+            """,
+            null,
+            """
+                plugins {
+                    java
+                }
+
+            """,
+        )
+
     private fun assertWritten(
         script: String,
         description: String?,
