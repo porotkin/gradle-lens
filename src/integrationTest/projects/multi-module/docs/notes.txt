@@ -1,0 +1,1 @@
+A plain directory that is not a Gradle module.
