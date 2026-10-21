@@ -1,3 +1,5 @@
+import org.jetbrains.intellij.platform.gradle.TestFrameworkType
+
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.intellijPlatform)
@@ -12,10 +14,15 @@ repositories {
 
 dependencies {
     intellijPlatform {
-        intellijIdea("2026.2.3")
+        intellijIdea(libs.versions.intellijIdea)
+
         bundledPlugin("com.intellij.gradle")
-        bundledPlugin("org.jetbrains.plugins.gradle")
+        bundledPlugin("org.jetbrains.kotlin")
+
+        testFramework(TestFrameworkType.Platform)
     }
+
+    testImplementation(libs.junit)
 }
 
 kotlin {
