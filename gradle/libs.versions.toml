@@ -3,9 +3,14 @@ kotlin = "2.4.21"
 intellijPlatform = "2.19.0"
 intellijIdea = "2026.2.3"
 junit = "4.13.2"
+kotlinx-coroutines = "1.10.2"
+teamcity-serviceMessages = "2024.07"
 
 [libraries]
 junit = { module = "junit:junit", version.ref = "junit" }
+kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
+kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
+teamcity-serviceMessages = { module = "org.jetbrains.teamcity:serviceMessages", version.ref = "teamcity-serviceMessages" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
