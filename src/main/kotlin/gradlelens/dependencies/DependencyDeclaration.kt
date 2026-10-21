@@ -26,7 +26,6 @@ private fun KtCallExpression.calleeName(): String? =
 private fun KtCallExpression.firstStringArgument(): String? =
     (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)?.plainContent
 
-// `projects.core` inside `projects.core.foo` is not an accessor of its own.
 private fun KtExpression.isReceiver(): Boolean =
     (parent as? KtDotQualifiedExpression)?.receiverExpression == this
 
