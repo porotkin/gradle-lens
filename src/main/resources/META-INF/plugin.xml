@@ -10,7 +10,7 @@
             <li>Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b>: <b>All Modules</b>, <b>Selected
                 Modules</b> or <b>None</b>.
             </li>
-            <li><b>Edit Module Description</b> (<b>Alt+Shift+E</b>, <b>⌥⇧E</b> on macOS) in the context menu of a module
+            <li><b>Edit Module Description</b> (<b>Shift+Enter</b>) in the context menu of a module
                 folder writes the description where the module declares it, its <code>build.gradle.kts</code> or
                 <code>gradle.properties</code>, and shows it right away, without waiting for a Gradle sync.
             </li>
@@ -66,7 +66,7 @@
                 text="Edit Module Description…"
                 description="Edit the Gradle description of this module in its build script">
             <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="RenameElement"/>
-            <keyboard-shortcut keymap="$default" first-keystroke="alt shift E"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="shift ENTER"/>
         </action>
         <group id="com.github.porotkin.gradlelens.ModuleDescriptions" text="Module Descriptions" popup="true">
             <add-to-group group-id="ProjectView.ToolWindow.Appearance.Actions"/>
