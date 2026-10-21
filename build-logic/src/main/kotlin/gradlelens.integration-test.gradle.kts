@@ -1,5 +1,6 @@
 import gradlelens.buildlogic.GenerateIntegrationTestIde
 import org.gradle.accessors.dm.LibrariesForLibs
+import org.gradle.api.tasks.testing.logging.TestLogEvent
 import org.jetbrains.intellij.platform.gradle.TestFrameworkType
 
 plugins {
@@ -35,5 +36,6 @@ intellijPlatformTesting.testIdeUi.register(integrationTest.name) {
         testClassesDirs = integrationTest.output.classesDirs
         classpath = integrationTest.runtimeClasspath
         useJUnitPlatform { excludeEngines("junit-vintage") }
+        testLogging { events(TestLogEvent.PASSED, TestLogEvent.SKIPPED, TestLogEvent.FAILED) }
     }
 }

@@ -1,11 +1,14 @@
 package gradlelens
 
+import com.intellij.driver.sdk.invokeAction
 import com.intellij.driver.sdk.invokeActionByShortcut
+import com.intellij.driver.sdk.ui.components.UiComponent
 import com.intellij.driver.sdk.ui.components.common.IdeaFrameUI
 import com.intellij.driver.sdk.ui.components.common.ideFrame
 import com.intellij.driver.sdk.ui.components.common.toolwindows.projectView
 import com.intellij.driver.sdk.ui.components.elements.popupMenu
 import com.intellij.driver.sdk.ui.ui
+import com.intellij.driver.sdk.waitFor
 import com.intellij.ide.starter.driver.engine.runIdeWithDriver
 import com.intellij.ide.starter.models.IDEStartResult
 import com.intellij.ide.starter.models.IdeInfo
@@ -24,6 +27,7 @@ import kotlin.io.path.Path
 import kotlin.io.path.createTempDirectory
 import kotlin.io.path.readText
 import kotlin.time.Duration.Companion.minutes
+import kotlin.time.Duration.Companion.seconds
 
 class ModuleDescriptionsTest {
     @Test
@@ -32,6 +36,38 @@ class ModuleDescriptionsTest {
             projectView {
                 projectViewTree.waitAnyTextsContains("Core module")
                 projectViewTree.waitAnyTextsContains("Library module")
+            }
+        }
+    }
+
+    @Test
+    fun hidesAndShowsAllModuleDescriptions() {
+        runInMultiModuleProject("hidesAndShowsAllModuleDescriptions") {
+            projectView {
+                projectViewTree.waitAnyTextsContains("Core module")
+                driver.invokeAction("com.github.porotkin.gradlelens.HideModuleDescriptions")
+                projectViewTree.waitNoTextsContain("Core module")
+                projectViewTree.waitNoTextsContain("Library module")
+                driver.invokeAction("com.github.porotkin.gradlelens.ShowAllModuleDescriptions")
+                projectViewTree.waitAnyTextsContains("Core module")
+                projectViewTree.waitAnyTextsContains("Library module")
+            }
+        }
+    }
+
+    @Test
+    fun showsDescriptionsOfSelectedModulesOnly() {
+        runInMultiModuleProject("showsDescriptionsOfSelectedModulesOnly") {
+            projectView {
+                projectViewTree.waitAnyTextsContains("Core module")
+                driver.invokeAction("com.github.porotkin.gradlelens.ShowSelectedModuleDescriptions")
+                projectViewTree.waitNoTextsContain("Core module")
+                projectViewTree.waitNoTextsContain("Library module")
+                projectViewTree.clickPath("multi-module", "core", fullMatch = false)
+                projectViewTree.waitAnyTextsContains("Core module")
+                projectViewTree.clickPath("multi-module", "lib", fullMatch = false)
+                projectViewTree.waitAnyTextsContains("Library module")
+                projectViewTree.waitNoTextsContain("Core module")
             }
         }
     }
@@ -88,6 +124,9 @@ private fun runInMultiModuleProject(
     assertEquals(emptyList<Error>(), pluginErrorsIn(result))
     return project
 }
+
+private fun UiComponent.waitNoTextsContain(text: String) =
+    waitFor("No texts containing '$text' in $this", timeout = 15.seconds) { !hasSubtext(text) }
 
 private fun pluginErrorsIn(result: IDEStartResult): List<Error> =
     ErrorReporterToCI.collectErrors(result.runContext.logsDir)
