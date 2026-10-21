@@ -10,6 +10,10 @@
             <li>Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b>: <b>All Modules</b>, <b>Selected
                 Modules</b> or <b>None</b>.
             </li>
+            <li><b>Edit Module Description</b> (<b>Alt+Shift+E</b>, <b>⌥⇧E</b> on macOS) in the context menu of a module
+                folder writes the description where the module declares it, its <code>build.gradle.kts</code> or
+                <code>gradle.properties</code>, and shows it right away, without waiting for a Gradle sync.
+            </li>
             <li><b>Quick Documentation</b> on a module folder lists the Gradle modules that depend on it; click one to
                 open where it declares the dependency.
             </li>
@@ -19,6 +23,10 @@
 
     <change-notes><![CDATA[
         <ul>
+            <li>New: <b>Edit Module Description…</b> (<b>Alt+Shift+E</b>, <b>⌥⇧E</b> on macOS) in the context menu of a
+                module folder writes the description where the module declares it, its <code>build.gradle.kts</code>
+                or <code>gradle.properties</code>, and shows it right away, without waiting for a Gradle sync.
+            </li>
             <li>New: <b>Quick Documentation</b> on a module folder lists the Gradle modules that depend on it; click one
                 to open where it declares the dependency.
             </li>
@@ -30,6 +38,7 @@
     <depends>com.intellij.modules.platform</depends>
     <depends>com.intellij.gradle</depends>
     <depends>org.jetbrains.kotlin</depends>
+    <depends>com.intellij.properties</depends>
 
     <extensions defaultExtensionNs="org.jetbrains.kotlin">
         <supportsKotlinPluginMode supportsK1="true" supportsK2="true"/>
@@ -52,6 +61,13 @@
     </projectListeners>
 
     <actions>
+        <action id="com.github.porotkin.gradlelens.EditModuleDescription"
+                class="gradlelens.description.EditModuleDescriptionAction"
+                text="Edit Module Description…"
+                description="Edit the Gradle description of this module in its build script">
+            <add-to-group group-id="ProjectViewPopupMenu" anchor="after" relative-to-action="RenameElement"/>
+            <keyboard-shortcut keymap="$default" first-keystroke="alt shift E"/>
+        </action>
         <group id="com.github.porotkin.gradlelens.ModuleDescriptions" text="Module Descriptions" popup="true">
             <add-to-group group-id="ProjectView.ToolWindow.Appearance.Actions"/>
             <action id="com.github.porotkin.gradlelens.ShowAllModuleDescriptions"

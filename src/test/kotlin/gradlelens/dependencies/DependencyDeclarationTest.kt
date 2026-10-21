@@ -1,17 +1,8 @@
 package gradlelens.dependencies
 
-import com.intellij.testFramework.LoggedErrorProcessor
-import com.intellij.testFramework.fixtures.BasePlatformTestCase
-import org.jetbrains.kotlin.psi.KtFile
+import gradlelens.BuildFileTestCase
 
-class DependencyDeclarationTest : BasePlatformTestCase() {
-    override fun setUp() =
-        LoggedErrorProcessor.executeWith<Throwable>(object : LoggedErrorProcessor() {
-            override fun processError(category: String, message: String, details: Array<String>, t: Throwable?) =
-                if ("com.intellij.modules.ultimate" in message) Action.NONE
-                else super.processError(category, message, details, t)
-        }) { super.setUp() }
-
+class DependencyDeclarationTest : BuildFileTestCase() {
     fun testFindsDeclaration() {
         val script = """
             dependencies {
@@ -21,7 +12,7 @@ class DependencyDeclarationTest : BasePlatformTestCase() {
                 api(project(path = ":core"))
             }
         """.trimIndent()
-        val file = myFixture.configureByText("build.gradle.kts", script) as KtFile
+        val file = buildScript(script)
         fun offset(gradlePath: String) = findDependencyDeclaration(file, gradlePath)?.textOffset
 
         assertEquals(script.indexOf("project(", script.indexOf("fooBar")), offset(":core:foo"))

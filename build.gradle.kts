@@ -9,6 +9,7 @@ dependencies {
 
         bundledPlugin("com.intellij.gradle")
         bundledPlugin("org.jetbrains.kotlin")
+        bundledPlugin("com.intellij.properties")
     }
 }
 

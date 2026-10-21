@@ -11,14 +11,22 @@ data class GradleModule(
     val description: String?,
     val buildScript: File?,
     val dependencies: Set<String>,
-)
+) {
+    val isBuildRoot: Boolean
+        get() = path == ":"
+}
 
 @JvmInline
 value class GradleModules private constructor(
     private val byDirectory: Map<String, GradleModule>,
 ) {
     constructor(modules: Iterable<GradleModule>) :
-            this(modules.associateByTo(CollectionFactory.createFilePathMap(), GradleModule::directory))
+            this(
+                modules.associateByTo(
+                    CollectionFactory.createFilePathMap(),
+                    GradleModule::directory,
+                )
+            )
 
     operator fun get(directory: String): GradleModule? =
         byDirectory[directory]

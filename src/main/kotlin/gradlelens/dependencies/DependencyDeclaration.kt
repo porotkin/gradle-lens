@@ -2,6 +2,7 @@ package gradlelens.dependencies
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SyntaxTraverser
+import gradlelens.calleeName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 
@@ -19,9 +20,6 @@ private fun PsiElement.isProjectCall(gradlePath: String): Boolean =
 
 private fun PsiElement.isProjectAccessor(accessor: List<String>): Boolean =
     this is KtDotQualifiedExpression && names() == accessor && !isReceiver()
-
-private fun KtCallExpression.calleeName(): String? =
-    (calleeExpression as? KtNameReferenceExpression)?.getReferencedName()
 
 private fun KtCallExpression.firstStringArgument(): String? =
     (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)?.plainContent
