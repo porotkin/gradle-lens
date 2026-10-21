@@ -19,10 +19,11 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>New <b>Selected Modules</b> mode: Project view <b>⋮</b> → <b>Appearance</b> → <b>Module Descriptions</b> is
-                now a submenu with <b>All Modules</b>, <b>Selected Modules</b> and <b>None</b>.
+            <li>New: <b>Quick Documentation</b> on a module folder lists the Gradle modules that depend on it; click one
+                to open where it declares the dependency.
             </li>
-            <li>Descriptions now refresh after a Gradle sync and when the project opens.</li>
+            <li><b>Selected Modules</b> mode follows the Project view selection right after the project opens.</li>
+            <li>Descriptions and dependents now show for projects opened through a symlinked path.</li>
         </ul>
         ]]></change-notes>
 
