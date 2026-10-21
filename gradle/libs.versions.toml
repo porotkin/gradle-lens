@@ -11,7 +11,9 @@ junit = { module = "junit:junit", version.ref = "junit" }
 kotlin-stdlib = { module = "org.jetbrains.kotlin:kotlin-stdlib", version.ref = "kotlin" }
 kotlinx-coroutines-core = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm", version.ref = "kotlinx-coroutines" }
 teamcity-serviceMessages = { module = "org.jetbrains.teamcity:serviceMessages", version.ref = "teamcity-serviceMessages" }
+kotlin-gradlePlugin = { module = "org.jetbrains.kotlin:kotlin-gradle-plugin", version.ref = "kotlin" }
+intellijPlatform-gradlePlugin = { module = "org.jetbrains.intellij.platform:intellij-platform-gradle-plugin", version.ref = "intellijPlatform" }
 
 [plugins]
-kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
-intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
+gradlelens-intellijPlugin = { id = "gradlelens.intellij-plugin" }
+gradlelens-integrationTest = { id = "gradlelens.integration-test" }
