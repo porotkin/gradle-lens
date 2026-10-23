@@ -14,5 +14,6 @@ Quick Documentation (`F1` / `Ctrl+Q`) on a module folder lists the Gradle module
 where it declares the dependency.
 
 Unused and undeclared dependencies found by [Dependency Lens](https://github.com/porotkin/dependency-lens) are marked
-where `build.gradle.kts` declares them, and as warnings in the Dependency Analyzer. Run `./gradlew dependencyLens` to
-update them.
+where `build.gradle.kts` declares them, and as warnings in the IntelliJ IDEA
+[Gradle Dependency Analyzer](https://www.jetbrains.com/help/idea/work-with-gradle-dependency-diagram.html#dependency_analyzer).
+Run `./gradlew dependencyLens` to update them.
