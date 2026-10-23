@@ -50,7 +50,7 @@ fun declarationNotations(
     if (module.buildPath == dependent.buildPath) {
         listOf(ProjectNotation(module.path))
     } else {
-        emptyList()
+        listOfNotNull(module.coordinates?.let(::CoordinatesNotation))
     }
 
 private fun PsiElement.isProjectCall(gradlePath: String): Boolean =

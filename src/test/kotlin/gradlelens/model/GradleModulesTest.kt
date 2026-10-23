@@ -35,6 +35,7 @@ private fun module(path: String, dependencies: Set<String>) =
         directory = "/repo" + path.replace(':', '/'),
         identityPath = path,
         path = path,
+        coordinates = null,
         description = null,
         buildScript = null,
         dependencies = dependencies,

@@ -8,6 +8,7 @@ data class GradleModule(
     val directory: String,
     val identityPath: String,
     val path: String,
+    val coordinates: String?,
     val description: String?,
     val buildScript: File?,
     val dependencies: Set<String>,

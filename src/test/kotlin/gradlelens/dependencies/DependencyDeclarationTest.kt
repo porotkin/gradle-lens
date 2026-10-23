@@ -50,6 +50,7 @@ class DependencyDeclarationTest : BuildFileTestCase() {
         val script = """
             dependencies {
                 implementation(projects.core)
+                implementation("common:graphs:1.0")
             }
         """.trimIndent()
         val file = buildScript(script)
@@ -58,6 +59,7 @@ class DependencyDeclarationTest : BuildFileTestCase() {
             findDeclaration(file, declarationNotations(module(identityPath), app))?.textOffset
 
         assertEquals(script.indexOf("projects.core"), offset(":server:core"))
+        assertEquals(script.indexOf("\"common:graphs"), offset(":common:graphs"))
         assertNull(offset(":common:core"))
     }
 }
@@ -67,6 +69,7 @@ private fun module(identityPath: String) =
         directory = "/repo" + identityPath.replace(':', '/'),
         identityPath = identityPath,
         path = ":" + identityPath.substringAfterLast(':'),
+        coordinates = identityPath.removePrefix(":"),
         description = null,
         buildScript = null,
         dependencies = emptySet(),

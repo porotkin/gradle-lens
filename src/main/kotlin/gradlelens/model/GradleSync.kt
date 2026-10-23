@@ -45,6 +45,9 @@ private fun DataNode<ModuleData>.toGradleModule(): GradleModule? {
         directory = data.linkedExternalProjectPath,
         identityPath = identityPath,
         path = data.gradlePathOrNull ?: identityPath,
+        coordinates = data.group
+            ?.takeUnless(String::isEmpty)
+            ?.let { "$it:${data.externalName}" },
         description = data.description,
         buildScript = ExternalSystemApiUtil.find(this, GradleProjectBuildScriptData.KEY)
             ?.data?.buildScriptSource,
