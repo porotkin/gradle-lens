@@ -15,7 +15,8 @@ It updates the description where the module declares it: `description = "…"` i
 so it is never used. The Project view shows the new description right away, without waiting for a Gradle sync.
 
 Quick Documentation (`F1` / `Ctrl+Q`) on a module folder lists the Gradle modules that depend on it; click one to open
-where it declares the dependency.
+where it declares the dependency. In a composite build this includes modules of other included builds, declared by
+coordinates (`"group:name"`) or by a version catalog entry for them.
 
 Unused and undeclared dependencies found by [Dependency Lens](https://github.com/porotkin/dependency-lens) are marked
 where `build.gradle.kts` declares them, and as warnings in the IntelliJ IDEA
