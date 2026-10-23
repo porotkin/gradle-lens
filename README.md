@@ -1,5 +1,9 @@
 # Gradle Lens
 
+[![GitHub Licence](https://img.shields.io/github/license/porotkin/gradle-lens)](https://github.com/porotkin/gradle-lens/blob/main/LICENSE)
+[![GitHub Workflow Status (with event)](https://img.shields.io/github/actions/workflow/status/porotkin/gradle-lens/test.yml)](https://github.com/porotkin/gradle-lens/actions/workflows/test.yml)
+[![JetBrains Marketplace](https://img.shields.io/jetbrains/plugin/v/35278)](https://plugins.jetbrains.com/plugin/35278-gradle-lens)
+
 IDEA plugin: shows the Gradle `description` of a module next to its folder in the Project view.
 
 Mode: Project view ⋮ → Appearance → Module Descriptions → All Modules / Selected Modules / None.
