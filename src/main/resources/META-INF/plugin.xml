@@ -52,6 +52,8 @@
         <localInspection language="kotlin" shortName="DependencyLens" displayName="Dependency Lens findings"
                          groupName="Gradle" enabledByDefault="true" level="WARNING"
                          implementationClass="gradlelens.dependencylens.DependencyLensInspection"/>
+        <externalSystemDependencyAnalyzer order="first"
+                                          implementation="gradlelens.dependencylens.DependencyLensAnalyzerExtension"/>
         <externalSystemTaskNotificationListener
                 implementation="gradlelens.dependencylens.RefreshFindingsAfterGradleTask"/>
     </extensions>
