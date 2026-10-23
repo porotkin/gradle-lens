@@ -49,6 +49,9 @@
         <postStartupActivity implementation="gradlelens.model.LoadGradleModelOnStartup"/>
         <postStartupActivity implementation="gradlelens.description.AttachProjectViewSelection"/>
         <documentationProvider implementation="gradlelens.dependencies.ModuleDependenciesDocumentationProvider"/>
+        <localInspection language="kotlin" shortName="DependencyLens" displayName="Dependency Lens findings"
+                         groupName="Gradle" enabledByDefault="true" level="WARNING"
+                         implementationClass="gradlelens.dependencylens.DependencyLensInspection"/>
     </extensions>
 
     <projectListeners>

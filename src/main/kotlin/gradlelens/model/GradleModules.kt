@@ -34,6 +34,9 @@ value class GradleModules private constructor(
     fun find(directory: VirtualFile): GradleModule? =
         directory.canonicalPath?.let(::get)
 
+    fun isBuildScript(file: VirtualFile): Boolean =
+        file.parent?.let(::find)?.buildScript?.name == file.name
+
     fun dependentsOf(module: GradleModule): List<GradleModule> =
         byDirectory.values
             .filter { it.directory != module.directory && module.directory in it.dependencies }
