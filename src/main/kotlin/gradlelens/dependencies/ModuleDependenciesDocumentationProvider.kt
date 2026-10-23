@@ -66,4 +66,4 @@ private fun declarationOffset(
     buildScript: VirtualFile,
     gradlePath: String,
 ): Int? =
-    (psiManager.findFile(buildScript) as? KtFile)?.let { findDependencyDeclaration(it, gradlePath) }?.textOffset
+    (psiManager.findFile(buildScript) as? KtFile)?.let { findDeclaration(it, ProjectNotation(gradlePath)) }?.textOffset

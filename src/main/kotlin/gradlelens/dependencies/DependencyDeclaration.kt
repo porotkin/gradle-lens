@@ -6,20 +6,41 @@ import gradlelens.calleeName
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 
-fun findDependencyDeclaration(
-    script: KtFile,
-    gradlePath: String,
-): PsiElement? {
-    val accessor = projectAccessor(gradlePath)
-    return SyntaxTraverser.psiTraverser(script)
-        .firstOrNull { it.isProjectCall(gradlePath) || it.isProjectAccessor(accessor) }
+sealed interface DependencyNotation {
+    fun matches(element: PsiElement): Boolean
 }
+
+data class ProjectNotation(val gradlePath: String) : DependencyNotation {
+    private val accessor = projectAccessor(gradlePath)
+
+    override fun matches(element: PsiElement): Boolean =
+        element.isProjectCall(gradlePath) || element.isAccessor(accessor)
+}
+
+data class CoordinatesNotation(val module: String) : DependencyNotation {
+    override fun matches(element: PsiElement): Boolean =
+        element.isCoordinates(module)
+}
+
+data class AccessorNotation(val names: List<String>) : DependencyNotation {
+    override fun matches(element: PsiElement): Boolean =
+        element.isAccessor(names)
+}
+
+fun findDeclaration(
+    script: KtFile,
+    notation: DependencyNotation,
+): PsiElement? =
+    SyntaxTraverser.psiTraverser(script).firstOrNull(notation::matches)
 
 private fun PsiElement.isProjectCall(gradlePath: String): Boolean =
     this is KtCallExpression && calleeName() == "project" && firstStringArgument() == gradlePath
 
-private fun PsiElement.isProjectAccessor(accessor: List<String>): Boolean =
+private fun PsiElement.isAccessor(accessor: List<String>): Boolean =
     this is KtDotQualifiedExpression && names() == accessor && !isReceiver()
+
+private fun PsiElement.isCoordinates(module: String): Boolean =
+    this is KtStringTemplateExpression && plainContent.let { it == module || it.startsWith("$module:") }
 
 private fun KtCallExpression.firstStringArgument(): String? =
     (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)?.plainContent
