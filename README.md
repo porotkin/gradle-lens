@@ -12,3 +12,7 @@ so it is never used. The Project view shows the new description right away, with
 
 Quick Documentation (`F1` / `Ctrl+Q`) on a module folder lists the Gradle modules that depend on it; click one to open
 where it declares the dependency.
+
+Unused and undeclared dependencies found by [Dependency Lens](https://github.com/porotkin/dependency-lens) are marked
+where `build.gradle.kts` declares them, and as warnings in the Dependency Analyzer. Run `./gradlew dependencyLens` to
+update them.
