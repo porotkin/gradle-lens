@@ -36,6 +36,12 @@ fun findDeclaration(
 ): PsiElement? =
     SyntaxTraverser.psiTraverser(script).firstOrNull(notation::matches)
 
+fun findDeclaration(
+    script: KtFile,
+    notations: List<DependencyNotation>,
+): PsiElement? =
+    notations.firstNotNullOfOrNull { findDeclaration(script, it) }
+
 private fun PsiElement.isProjectCall(gradlePath: String): Boolean =
     this is KtCallExpression && calleeName() == "project" && firstStringArgument() == gradlePath
 

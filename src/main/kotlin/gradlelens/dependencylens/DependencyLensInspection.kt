@@ -46,4 +46,4 @@ class DependencyLensInspection : LocalInspectionTool() {
 }
 
 fun Finding.declarationIn(script: KtFile): PsiElement? =
-    declarations.firstNotNullOfOrNull { findDeclaration(script, it) }
+    findDeclaration(script, declarations)
