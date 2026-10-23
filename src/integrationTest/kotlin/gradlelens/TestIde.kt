@@ -1,7 +1,10 @@
 package gradlelens
 
+import com.intellij.driver.sdk.invokeActionByShortcut
 import com.intellij.driver.sdk.ui.components.common.IdeaFrameUI
+import com.intellij.driver.sdk.ui.components.common.codeEditor
 import com.intellij.driver.sdk.ui.components.common.ideFrame
+import com.intellij.driver.sdk.ui.components.common.toolwindows.projectView
 import com.intellij.ide.starter.driver.engine.runIdeWithDriver
 import com.intellij.ide.starter.ide.IDETestContext
 import com.intellij.ide.starter.models.IDEStartResult
@@ -45,6 +48,15 @@ internal fun IDETestContext.runInIde(actions: IdeaFrameUI.() -> Unit) {
 
     assertEquals(emptyList<Error>(), pluginErrorsIn(result))
 }
+
+internal fun IdeaFrameUI.showQuickDocumentation(vararg path: String) =
+    projectView {
+        projectViewTree.clickPath(*path, fullMatch = false)
+        projectViewTree.invokeActionByShortcut("QuickJavaDoc")
+    }
+
+internal fun IdeaFrameUI.textAtCaret(): String =
+    codeEditor().run { getLineText(getCaretLine()).substring(getCaretColumn() - 1) }
 
 private fun pluginErrorsIn(result: IDEStartResult): List<Error> =
     ErrorReporterToCI.collectErrors(result.runContext.logsDir)

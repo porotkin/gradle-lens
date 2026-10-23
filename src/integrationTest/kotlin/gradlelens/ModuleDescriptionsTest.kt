@@ -221,16 +221,16 @@ class ModuleDescriptionsTest {
             "listsDependentModulesInQuickDocumentationAndOpensTheirDeclarations",
         ) {
             projectView { projectViewTree.waitAnyTextsContains("Core module") }
-            showQuickDocumentation("lib")
+            showQuickDocumentation("multi-module", "lib")
             documentationHintEditorPane { waitAnyTextsContains("No modules") }
             keyboard { escape() }
 
-            showQuickDocumentation("core")
+            showQuickDocumentation("multi-module", "core")
             documentationHintEditorPane { waitOneText(":lib").click() }
             assertEquals("project(\":core\"))", textAtCaret())
             codeEditor().invokeActionByShortcut("CloseContent")
 
-            showQuickDocumentation("core")
+            showQuickDocumentation("multi-module", "core")
             documentationHintEditorPane { waitOneText(":app").click() }
             assertEquals("projects.core)", textAtCaret())
         }
@@ -295,15 +295,6 @@ private fun IdeaFrameUI.changeProjectView(viewId: String, subId: String?) =
     driver.withContext(OnDispatcher.EDT) {
         service<ProjectView>(singleProject()).changeView(viewId, subId)
     }
-
-private fun IdeaFrameUI.showQuickDocumentation(module: String) =
-    projectView {
-        projectViewTree.clickPath("multi-module", module, fullMatch = false)
-        projectViewTree.invokeActionByShortcut("QuickJavaDoc")
-    }
-
-private fun IdeaFrameUI.textAtCaret(): String =
-    codeEditor().run { getLineText(getCaretLine()).substring(getCaretColumn() - 1) }
 
 private fun UiComponent.waitNoTextsContain(text: String) =
     waitFor("No texts containing '$text' in $this", timeout = 15.seconds) { !hasSubtext(text) }
