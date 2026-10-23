@@ -3,6 +3,7 @@ package gradlelens.dependencies
 import com.intellij.psi.PsiElement
 import com.intellij.psi.SyntaxTraverser
 import gradlelens.calleeName
+import gradlelens.model.GradleModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
 
@@ -41,6 +42,16 @@ fun findDeclaration(
     notations: List<DependencyNotation>,
 ): PsiElement? =
     notations.firstNotNullOfOrNull { findDeclaration(script, it) }
+
+fun declarationNotations(
+    module: GradleModule,
+    dependent: GradleModule,
+): List<DependencyNotation> =
+    if (module.buildPath == dependent.buildPath) {
+        listOf(ProjectNotation(module.path))
+    } else {
+        emptyList()
+    }
 
 private fun PsiElement.isProjectCall(gradlePath: String): Boolean =
     this is KtCallExpression && calleeName() == "project" && firstStringArgument() == gradlePath

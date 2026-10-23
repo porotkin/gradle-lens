@@ -42,11 +42,17 @@ class ModuleDependenciesDocumentationProvider :
     ): Boolean {
         val usage = UsageLink.parse(link)
             ?: return false
-        val buildScript = LocalFileSystem.getInstance().findFileByPath(usage.buildScript)
-            ?: return false
+        val modules = psiManager.project.service<LocalGradleModel>().modules
+        val module = modules[usage.module]
+            ?: return true
+        val dependent = modules[usage.dependent]
+            ?: return true
+        val buildScript = dependent.buildScript
+            ?.let(LocalFileSystem.getInstance()::findFileByIoFile)
+            ?: return true
 
         ReadAction
-            .nonBlocking<Int?> { declarationOffset(psiManager, buildScript, usage.gradlePath) }
+            .nonBlocking<Int?> { declarationOffset(psiManager, buildScript, module, dependent) }
             .finishOnUiThread(ModalityState.defaultModalityState()) { offset ->
                 OpenFileDescriptor(psiManager.project, buildScript, offset ?: 0)
                     .navigate(true)
@@ -64,24 +70,25 @@ private fun renderDoc(
     DEFINITION_START + module.identityPath + DEFINITION_END +
             SECTIONS_START + SECTION_HEADER_START + "Used by:" + SECTION_SEPARATOR +
             dependents.joinToString("<br>") {
-                renderDependent(it, module.path)
+                renderDependent(module, it)
             }.ifEmpty { "No modules" } +
             SECTION_END + SECTIONS_END
 
 private fun renderDependent(
+    module: GradleModule,
     dependent: GradleModule,
-    declaredAs: String,
 ): String =
     dependent.buildScript
-        ?.let { UsageLink(declaredAs, it.path).encode() }
+        ?.let { UsageLink(module.directory, dependent.directory).encode() }
         ?.let { """<a href="$it">${dependent.identityPath}</a>""" }
         ?: dependent.identityPath
 
 private fun declarationOffset(
     psiManager: PsiManager,
     buildScript: VirtualFile,
-    gradlePath: String,
+    module: GradleModule,
+    dependent: GradleModule,
 ): Int? =
     (psiManager.findFile(buildScript) as? KtFile)
-        ?.let { findDeclaration(it, ProjectNotation(gradlePath)) }
+        ?.let { findDeclaration(it, declarationNotations(module, dependent)) }
         ?.textOffset

@@ -14,6 +14,9 @@ data class GradleModule(
 ) {
     val isBuildRoot: Boolean
         get() = path == ":"
+
+    val buildPath: String
+        get() = identityPath.removeSuffix(path)
 }
 
 @JvmInline

@@ -1,10 +1,10 @@
 package gradlelens.dependencies
 
 data class UsageLink(
-    val gradlePath: String,
-    val buildScript: String,
+    val module: String,
+    val dependent: String,
 ) {
-    fun encode(): String = "$PROTOCOL$gradlePath$SEPARATOR$buildScript"
+    fun encode(): String = "$PROTOCOL$module$SEPARATOR$dependent"
 
     companion object {
         private const val PROTOCOL = "gradle-lens-usage:"

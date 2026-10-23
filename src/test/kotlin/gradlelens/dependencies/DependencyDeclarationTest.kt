@@ -1,6 +1,7 @@
 package gradlelens.dependencies
 
 import gradlelens.BuildFileTestCase
+import gradlelens.model.GradleModule
 
 class DependencyDeclarationTest : BuildFileTestCase() {
     fun testFindsDeclaration() {
@@ -44,4 +45,29 @@ class DependencyDeclarationTest : BuildFileTestCase() {
         assertEquals(script.indexOf("libs.kotlinx.coroutines.core)"), offset(coroutines))
         assertNull(offset(CoordinatesNotation("org.example:li")))
     }
+
+    fun testFindsDeclarationOfModuleFromSameOrOtherBuild() {
+        val script = """
+            dependencies {
+                implementation(projects.core)
+            }
+        """.trimIndent()
+        val file = buildScript(script)
+        val app = module(":server:app")
+        fun offset(identityPath: String) =
+            findDeclaration(file, declarationNotations(module(identityPath), app))?.textOffset
+
+        assertEquals(script.indexOf("projects.core"), offset(":server:core"))
+        assertNull(offset(":common:core"))
+    }
 }
+
+private fun module(identityPath: String) =
+    GradleModule(
+        directory = "/repo" + identityPath.replace(':', '/'),
+        identityPath = identityPath,
+        path = ":" + identityPath.substringAfterLast(':'),
+        description = null,
+        buildScript = null,
+        dependencies = emptySet(),
+    )
