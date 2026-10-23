@@ -15,7 +15,8 @@
                 <code>gradle.properties</code>, and shows it right away, without waiting for a Gradle sync.
             </li>
             <li><b>Quick Documentation</b> on a module folder lists the Gradle modules that depend on it; click one to
-                open where it declares the dependency.
+                open where it declares the dependency, also in other builds of a composite build, by coordinates or a
+                version catalog entry.
             </li>
             <li>Marks the unused and undeclared dependencies that
                 <a href="https://github.com/porotkin/dependency-lens">Dependency Lens</a> reports, in
@@ -35,16 +36,10 @@
                 <a href="https://www.jetbrains.com/help/idea/work-with-gradle-dependency-diagram.html#dependency_analyzer">Gradle
                     Dependency Analyzer</a>.
             </li>
-            <li>New: <b>Edit Module Description…</b> (<b>Alt+Shift+E</b>, <b>⌥⇧E</b> on macOS) in the context menu of a
-                module folder writes the description where the module declares it, its <code>build.gradle.kts</code>
-                or <code>gradle.properties</code>, and shows it right away, without waiting for a Gradle sync.
+            <li><b>Quick Documentation</b> on a module folder now also lists dependents in other builds of a composite
+                build that declare the module by coordinates or a version catalog entry.
             </li>
-            <li>New: <b>Quick Documentation</b> on a module folder lists the Gradle modules that depend on it; click one
-                to open where it declares the dependency, also in other builds of a composite build, by coordinates or a
-                version catalog entry.
-            </li>
-            <li><b>Selected Modules</b> mode follows the Project view selection right after the project opens.</li>
-            <li>Descriptions and dependents now show for projects opened through a symlinked path.</li>
+            <li><b>Edit Module Description…</b> shortcut is now <b>Shift+Enter</b>.</li>
         </ul>
         ]]></change-notes>
 
