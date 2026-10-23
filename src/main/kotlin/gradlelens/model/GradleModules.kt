@@ -28,6 +28,9 @@ value class GradleModules private constructor(
                 )
             )
 
+    val directories: Set<String>
+        get() = byDirectory.keys
+
     operator fun get(directory: String): GradleModule? =
         byDirectory[directory]
 
