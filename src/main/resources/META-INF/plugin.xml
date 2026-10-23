@@ -61,6 +61,8 @@
                   topic="gradlelens.model.GradleModulesListener"/>
         <listener class="gradlelens.description.RefreshOnSelectionChange"
                   topic="com.intellij.ide.projectView.impl.ProjectViewListener"/>
+        <listener class="gradlelens.dependencylens.RehighlightOnModulesChanged"
+                  topic="gradlelens.model.GradleModulesListener"/>
     </projectListeners>
 
     <actions>
