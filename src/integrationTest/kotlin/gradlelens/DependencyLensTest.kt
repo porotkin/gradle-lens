@@ -8,12 +8,14 @@ import com.intellij.driver.sdk.singleProject
 import com.intellij.driver.sdk.ui.components.common.IdeaFrameUI
 import com.intellij.driver.sdk.ui.components.common.codeEditor
 import com.intellij.driver.sdk.waitFor
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.time.Duration.Companion.minutes
 
 class DependencyLensTest {
     @Test
+    @Disabled("io.github.porotkin.dependency-lens 0.1.0 is pending Gradle Plugin Portal approval")
     fun marksFindingsOfDependencyLensTaskInBuildScript() {
         val project = fixtureProject("dependency-lens")
 
