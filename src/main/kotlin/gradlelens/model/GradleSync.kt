@@ -17,7 +17,8 @@ import org.jetbrains.plugins.gradle.util.gradlePathOrNull
 
 class LoadGradleModelOnStartup : ProjectActivity {
     override suspend fun execute(project: Project) =
-        ExternalProjectsManager.getInstance(project).runWhenInitialized(project.service<LocalGradleModel>()::reload)
+        ExternalProjectsManager.getInstance(project)
+            .runWhenInitialized(project.service<LocalGradleModel>()::reload)
 }
 
 class ReloadGradleModelOnSync(private val project: Project) : ProjectDataImportListener {
@@ -37,13 +38,16 @@ fun readGradleModules(project: Project): GradleModules =
     )
 
 private fun DataNode<ModuleData>.toGradleModule(): GradleModule? {
-    val identityPath = data.gradleIdentityPathOrNull ?: return null
+    val identityPath = data.gradleIdentityPathOrNull
+        ?: return null
+
     return GradleModule(
         directory = data.linkedExternalProjectPath,
         identityPath = identityPath,
         path = data.gradlePathOrNull ?: identityPath,
         description = data.description,
-        buildScript = ExternalSystemApiUtil.find(this, GradleProjectBuildScriptData.KEY)?.data?.buildScriptSource,
+        buildScript = ExternalSystemApiUtil.find(this, GradleProjectBuildScriptData.KEY)
+            ?.data?.buildScriptSource,
         dependencies = ExternalSystemApiUtil.findAllRecursively(this, ProjectKeys.MODULE_DEPENDENCY)
             .mapTo(HashSet()) { it.data.target.linkedExternalProjectPath },
     )

@@ -46,7 +46,9 @@ value class GradleModules private constructor(
             .sortedBy(GradleModule::identityPath)
 
     fun updated(directory: String, change: (GradleModule) -> GradleModule): GradleModules {
-        val module = this[directory] ?: return this
+        val module = this[directory]
+            ?: return this
+
         return GradleModules(byDirectory.values.map { if (it === module) change(it) else it })
     }
 

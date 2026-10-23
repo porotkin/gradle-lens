@@ -43,10 +43,12 @@ private fun PsiElement.isAccessor(accessor: List<String>): Boolean =
     this is KtDotQualifiedExpression && names() == accessor && !isReceiver()
 
 private fun PsiElement.isCoordinates(module: String): Boolean =
-    this is KtStringTemplateExpression && plainContent.let { it == module || it.startsWith("$module:") }
+    this is KtStringTemplateExpression &&
+            plainContent.let { it == module || it.startsWith("$module:") }
 
 private fun KtCallExpression.firstStringArgument(): String? =
-    (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)?.plainContent
+    (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)
+        ?.plainContent
 
 private fun KtExpression.isReceiver(): Boolean =
     (parent as? KtDotQualifiedExpression)?.receiverExpression == this
@@ -56,7 +58,11 @@ private fun KtExpression.names(): List<String>? =
         is KtNameReferenceExpression -> listOf(getReferencedName())
         is KtDotQualifiedExpression -> {
             val selector = selectorExpression as? KtNameReferenceExpression
-            if (selector == null) null else receiverExpression.names()?.plus(selector.getReferencedName())
+            if (selector == null) {
+                null
+            } else {
+                receiverExpression.names()?.plus(selector.getReferencedName())
+            }
         }
 
         else -> null

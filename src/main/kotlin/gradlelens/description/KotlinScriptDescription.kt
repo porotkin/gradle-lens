@@ -13,7 +13,9 @@ class KotlinScriptDescriptionFile(override val psiFile: KtFile) : DescriptionFil
         assignment() != null
 
     override fun write(description: String?) {
-        val block = psiFile.script?.blockExpression ?: return
+        val block = psiFile.script?.blockExpression
+            ?: return
+
         val assignment = assignment()
         val factory = KtPsiFactory(psiFile.project)
         when {
@@ -21,16 +23,22 @@ class KotlinScriptDescriptionFile(override val psiFile: KtFile) : DescriptionFil
             assignment != null -> assignment.descriptionValue()
                 ?.replace(factory.createExpression(kotlinStringLiteral(description)))
 
-            else -> block.addStatement(
-                factory.createScriptStatement("$DESCRIPTION_PROPERTY = ${kotlinStringLiteral(description)}") ?: return,
-                initializers().lastOrNull { (it.body as? KtCallExpression)?.calleeName() in SCRIPT_HEADER_BLOCKS },
-                factory,
-            )
+            else -> {
+                val text = "$DESCRIPTION_PROPERTY = ${kotlinStringLiteral(description)}"
+                val statement = factory.createScriptStatement(text)
+                    ?: return
+                val header = initializers().lastOrNull {
+                    (it.body as? KtCallExpression)?.calleeName() in SCRIPT_HEADER_BLOCKS
+                }
+
+                block.addStatement(statement, header, factory)
+            }
         }
     }
 
     private fun initializers(): List<KtScriptInitializer> =
-        psiFile.script?.blockExpression?.statements.orEmpty().filterIsInstance<KtScriptInitializer>()
+        psiFile.script?.blockExpression?.statements.orEmpty()
+            .filterIsInstance<KtScriptInitializer>()
 
     private fun assignment(): KtScriptInitializer? =
         initializers().firstOrNull { it.descriptionValue() != null }
@@ -39,11 +47,14 @@ class KotlinScriptDescriptionFile(override val psiFile: KtFile) : DescriptionFil
 private fun KtScriptInitializer.descriptionValue(): KtExpression? =
     (body as? KtBinaryExpression)
         ?.takeIf { it.operationToken == KtTokens.EQ }
-        ?.takeIf { (it.left as? KtNameReferenceExpression)?.getReferencedName() == DESCRIPTION_PROPERTY }
+        ?.takeIf {
+            (it.left as? KtNameReferenceExpression)?.getReferencedName() == DESCRIPTION_PROPERTY
+        }
         ?.right
 
 private fun KtPsiFactory.createScriptStatement(text: String): KtScriptInitializer? =
-    createFile("statement.gradle.kts", text).script?.blockExpression?.statements?.singleOrNull() as? KtScriptInitializer
+    createFile("statement.gradle.kts", text)
+        .script?.blockExpression?.statements?.singleOrNull() as? KtScriptInitializer
 
 private fun KtBlockExpression.addStatement(
     statement: KtScriptInitializer,

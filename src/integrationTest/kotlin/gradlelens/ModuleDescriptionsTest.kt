@@ -29,22 +29,16 @@ import com.intellij.ide.starter.report.Error
 import com.intellij.ide.starter.report.ErrorReporterToCI
 import com.intellij.ide.starter.runner.Starter
 import com.intellij.tools.ide.starter.product.idea.ultimate.IdeaUltimate
-import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.createSymbolicLinkPointingTo
-import kotlin.io.path.createTempDirectory
-import kotlin.io.path.readText
-import kotlin.io.path.writeText
+import kotlin.io.path.*
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
-private const val EDIT_MODULE_DESCRIPTION_ACTION = "com.github.porotkin.gradlelens.EditModuleDescription"
+private const val EDIT_MODULE_DESCRIPTION_ACTION =
+    "com.github.porotkin.gradlelens.EditModuleDescription"
 private const val EDIT_MODULE_DESCRIPTION_TEXT = "Edit Module Description…"
 
 class ModuleDescriptionsTest {
@@ -108,7 +102,10 @@ class ModuleDescriptionsTest {
 
     @Test
     fun keepsModeAndFollowsSelectionAfterRestartInAnotherPane() {
-        ideContext("keepsModeAndFollowsSelectionAfterRestartInAnotherPane", multiModuleProject()).apply {
+        ideContext(
+            "keepsModeAndFollowsSelectionAfterRestartInAnotherPane",
+            multiModuleProject(),
+        ).apply {
             runInIde {
                 projectView { projectViewTree.waitAnyTextsContains("Core module") }
                 moduleDescriptionsMode("Selected Modules").click()
@@ -116,7 +113,9 @@ class ModuleDescriptionsTest {
             }
             runInIde {
                 changeProjectView("ProjectPane", null)
-                moduleDescriptionsMode("Selected Modules").apply { assertTrue(isSelected()) }.click()
+                moduleDescriptionsMode("Selected Modules")
+                    .apply { assertTrue(isSelected()) }
+                    .click()
                 projectView {
                     projectViewTree.clickPath("multi-module", "core", fullMatch = false)
                     projectViewTree.waitAnyTextsContains("Core module")
@@ -128,7 +127,10 @@ class ModuleDescriptionsTest {
 
     @Test
     fun hidesModuleDescriptionsWhenLegacySettingDisabledThem() {
-        ideContext("hidesModuleDescriptionsWhenLegacySettingDisabledThem", multiModuleProject()).apply {
+        ideContext(
+            "hidesModuleDescriptionsWhenLegacySettingDisabledThem",
+            multiModuleProject(),
+        ).apply {
             paths.configDir.resolve("options").createDirectories().resolve("other.xml").writeText(
                 """
                 |<application>
@@ -171,7 +173,10 @@ class ModuleDescriptionsTest {
             "plugins {\n    java\n}\n\ndescription = \"Edited core\"\n",
             project.resolve("core/build.gradle.kts").readText(),
         )
-        assertEquals("description=Library module v2\n", project.resolve("lib/gradle.properties").readText())
+        assertEquals(
+            "description=Library module v2\n",
+            project.resolve("lib/gradle.properties").readText(),
+        )
     }
 
     @Test
@@ -187,14 +192,19 @@ class ModuleDescriptionsTest {
         }
 
         assertEquals(
-            "plugins {\n    java\n}\n\ndescription = \"App module\"\n\ndependencies {\n    implementation(projects.core)\n}\n",
+            "plugins {\n    java\n}\n\n" +
+                    "description = \"App module\"\n\n" +
+                    "dependencies {\n    implementation(projects.core)\n}\n",
             project.resolve("app/build.gradle.kts").readText(),
         )
         assertEquals(
             "description=Legacy module\nkotlin.code.style=official\n",
             project.resolve("legacy/gradle.properties").readText(),
         )
-        assertEquals("plugins {\n    java\n}\n", project.resolve("core/build.gradle.kts").readText())
+        assertEquals(
+            "plugins {\n    java\n}\n",
+            project.resolve("core/build.gradle.kts").readText(),
+        )
     }
 
     @Test
@@ -220,7 +230,9 @@ class ModuleDescriptionsTest {
 
     @Test
     fun listsDependentModulesInQuickDocumentationAndOpensTheirDeclarations() {
-        runInMultiModuleProject("listsDependentModulesInQuickDocumentationAndOpensTheirDeclarations") {
+        runInMultiModuleProject(
+            "listsDependentModulesInQuickDocumentationAndOpensTheirDeclarations",
+        ) {
             projectView { projectViewTree.waitAnyTextsContains("Core module") }
             showQuickDocumentation("lib")
             documentationHintEditorPane { waitAnyTextsContains("No modules") }
@@ -254,7 +266,8 @@ private fun ideContext(testName: String, project: Path): IDETestContext =
         TestCase(IdeInfo.IdeaUltimate, LocalProjectInfo(project))
             .withVersion(IntegrationTestIde.VERSION),
     ).apply {
-        PluginConfigurator(this).installPluginFromPath(Path(System.getProperty("path.to.build.plugin")))
+        PluginConfigurator(this)
+            .installPluginFromPath(Path(System.getProperty("path.to.build.plugin")))
     }
 
 private fun IDETestContext.runInIde(actions: IdeaFrameUI.() -> Unit) {

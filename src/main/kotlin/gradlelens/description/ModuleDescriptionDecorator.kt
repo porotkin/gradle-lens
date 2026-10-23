@@ -10,14 +10,21 @@ import gradlelens.model.LocalGradleModel
 class ModuleDescriptionDecorator : ProjectViewNodeDecorator {
     override fun decorate(node: ProjectViewNode<*>, data: PresentationData) {
         val mode = moduleDescriptionsMode
-        if (mode == ModuleDescriptionsMode.NONE) return
-        val project = node.project ?: return
-        val directory = (node as? PsiDirectoryNode)?.virtualFile ?: return
-        if (mode == ModuleDescriptionsMode.SELECTED && directory !in project.getUserData(SELECTED_FILES)
-                .orEmpty()
-        ) return
+        if (mode == ModuleDescriptionsMode.NONE) {
+            return
+        }
 
-        val description = project.service<LocalGradleModel>().modules.find(directory)?.description ?: return
+        val project = node.project
+            ?: return
+        val directory = (node as? PsiDirectoryNode)?.virtualFile
+            ?: return
+        val selectedFiles = project.getUserData(SELECTED_FILES).orEmpty()
+        if (mode == ModuleDescriptionsMode.SELECTED && directory !in selectedFiles) {
+            return
+        }
+
+        val description = project.service<LocalGradleModel>().modules.find(directory)?.description
+            ?: return
 
         data.locationString = description
     }

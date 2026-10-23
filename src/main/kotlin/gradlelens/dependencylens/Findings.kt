@@ -31,7 +31,9 @@ class Finding(
 )
 
 fun readFindings(moduleDirectory: VirtualFile): List<Finding> {
-    val reports = moduleDirectory.findFileByRelativePath(FINDINGS_DIRECTORY) ?: return emptyList()
+    val reports = moduleDirectory.findFileByRelativePath(FINDINGS_DIRECTORY)
+        ?: return emptyList()
+
     return VfsUtil.collectChildrenRecursively(reports)
         .filter { it.name == "findings.tsv" }
         .flatMap { it.readText().lines().drop(1) }
@@ -40,14 +42,27 @@ fun readFindings(moduleDirectory: VirtualFile): List<Finding> {
 
 private fun parseFinding(line: String): Finding? {
     val columns = line.split('\t')
-    if (columns.size != 5) return null
-    val issue = Issue.entries.find { it.name == columns[0] } ?: return null
-    return Finding(issue, columns[1], parseNotation(columns[2]), columns[3].split(',').map(::parseNotation), columns[4])
+    if (columns.size != 5) {
+        return null
+    }
+
+    val issue = Issue.entries.find { it.name == columns[0] }
+        ?: return null
+
+    return Finding(
+        issue,
+        columns[1],
+        parseNotation(columns[2]),
+        columns[3].split(',').map(::parseNotation),
+        columns[4],
+    )
 }
 
 private fun parseNotation(spelling: String): DependencyNotation =
     when {
-        spelling.startsWith(PROJECT_PREFIX) -> ProjectNotation(spelling.removePrefix(PROJECT_PREFIX))
+        spelling.startsWith(PROJECT_PREFIX) ->
+            ProjectNotation(spelling.removePrefix(PROJECT_PREFIX))
+
         ':' in spelling -> CoordinatesNotation(spelling)
         else -> AccessorNotation(spelling.split('.'))
     }

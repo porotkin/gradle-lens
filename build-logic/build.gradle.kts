@@ -4,7 +4,8 @@ plugins {
     `kotlin-dsl`
 }
 
-val versionCatalogAccessors = files(LibrariesForLibs::class.java.protectionDomain.codeSource.location)
+val versionCatalogAccessors =
+    files(LibrariesForLibs::class.java.protectionDomain.codeSource.location)
 
 dependencies {
     implementation(libs.kotlin.gradlePlugin)

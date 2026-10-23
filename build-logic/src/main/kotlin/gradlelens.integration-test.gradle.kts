@@ -10,22 +10,27 @@ plugins {
 val libs = the<LibrariesForLibs>()
 
 val integrationTest: SourceSet = sourceSets.create("integrationTest")
-val integrationTestImplementation: Configuration = configurations[integrationTest.implementationConfigurationName]
+val integrationTestImplementation: Configuration =
+    configurations[integrationTest.implementationConfigurationName]
 
 dependencies {
     intellijPlatform {
-        testFramework(TestFrameworkType.Starter, configurationName = integrationTestImplementation.name)
+        testFramework(
+            TestFrameworkType.Starter,
+            configurationName = integrationTestImplementation.name,
+        )
     }
     integrationTestImplementation(libs.kotlin.stdlib)
     integrationTestImplementation(libs.kotlinx.coroutines.core)
     integrationTestImplementation(libs.teamcity.serviceMessages)
 }
 
-val generateIntegrationTestIde = tasks.register<GenerateIntegrationTestIde>("generateIntegrationTestIde") {
-    description = "Generates the IDE version constant the integration tests start the IDE with."
-    ideVersion = libs.versions.intellijIdea
-    outputDirectory = layout.buildDirectory.dir("generated/integrationTestIde")
-}
+val generateIntegrationTestIde =
+    tasks.register<GenerateIntegrationTestIde>("generateIntegrationTestIde") {
+        description = "Generates the IDE version constant the integration tests start the IDE with."
+        ideVersion = libs.versions.intellijIdea
+        outputDirectory = layout.buildDirectory.dir("generated/integrationTestIde")
+    }
 
 kotlin.sourceSets.named(integrationTest.name) {
     kotlin.srcDir(generateIntegrationTestIde.flatMap(GenerateIntegrationTestIde::outputDirectory))

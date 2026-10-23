@@ -22,7 +22,8 @@ fun descriptionFileOf(file: PsiFile): DescriptionFile? =
     }
 
 fun chooseDescriptionFile(filesByPrecedence: List<DescriptionFile>): DescriptionFile? =
-    filesByPrecedence.firstOrNull(DescriptionFile::declaresDescription) ?: filesByPrecedence.firstOrNull()
+    filesByPrecedence.firstOrNull(DescriptionFile::declaresDescription)
+        ?: filesByPrecedence.firstOrNull()
 
 fun Char.unicodeEscaped(): String =
     "\\u%04x".format(code)

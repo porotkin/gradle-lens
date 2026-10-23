@@ -12,7 +12,10 @@ data class UsageLink(
         private const val SEPARATOR = '|'
 
         fun parse(link: String): UsageLink? {
-            if (!link.startsWith(PROTOCOL)) return null
+            if (!link.startsWith(PROTOCOL)) {
+                return null
+            }
+
             val parts = link.removePrefix(PROTOCOL).split(SEPARATOR, limit = 2)
             return if (parts.size == 2) UsageLink(parts[0], parts[1]) else null
         }

@@ -45,18 +45,24 @@ class GradlePropertiesDescriptionTest : BuildFileTestCase() {
 
     fun testPrefersTheFileThatDeclaresTheDescription() {
         val script = KotlinScriptDescriptionFile(buildScript("plugins {}"))
-        val declaringProperties = GradlePropertiesDescriptionFile(gradleProperties("description=Core module"))
+        val declaringProperties =
+            GradlePropertiesDescriptionFile(gradleProperties("description=Core module"))
 
         assertSame(declaringProperties, chooseDescriptionFile(listOf(script, declaringProperties)))
     }
 
     fun testPrefersTheBuildScriptWhenBothOrNeitherDeclare() {
         val declaringScript = KotlinScriptDescriptionFile(buildScript("description = \"Script\""))
-        val declaringProperties = GradlePropertiesDescriptionFile(gradleProperties("description=Properties"))
+        val declaringProperties =
+            GradlePropertiesDescriptionFile(gradleProperties("description=Properties"))
         val emptyScript = KotlinScriptDescriptionFile(buildScript("plugins {}"))
-        val emptyProperties = GradlePropertiesDescriptionFile(gradleProperties("org.gradle.caching=true"))
+        val emptyProperties =
+            GradlePropertiesDescriptionFile(gradleProperties("org.gradle.caching=true"))
 
-        assertSame(declaringScript, chooseDescriptionFile(listOf(declaringScript, declaringProperties)))
+        assertSame(
+            declaringScript,
+            chooseDescriptionFile(listOf(declaringScript, declaringProperties)),
+        )
         assertSame(emptyScript, chooseDescriptionFile(listOf(emptyScript, emptyProperties)))
     }
 
@@ -66,7 +72,9 @@ class GradlePropertiesDescriptionTest : BuildFileTestCase() {
         expected: String,
     ) {
         val file = gradleProperties(properties.trimIndent())
-        WriteCommandAction.runWriteCommandAction(project) { GradlePropertiesDescriptionFile(file).write(description) }
+        WriteCommandAction.runWriteCommandAction(project) {
+            GradlePropertiesDescriptionFile(file).write(description)
+        }
         assertEquals(expected.trimIndent(), file.containingFile.text)
     }
 }

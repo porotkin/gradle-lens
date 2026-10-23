@@ -34,7 +34,10 @@ class LocalGradleModel(
             modules = transform(previous)
             modules != previous
         }
-        if (changed) project.messageBus.syncPublisher(GradleModulesListener.TOPIC).modulesChanged()
+
+        if (changed) {
+            project.messageBus.syncPublisher(GradleModulesListener.TOPIC).modulesChanged()
+        }
     }
 }
 

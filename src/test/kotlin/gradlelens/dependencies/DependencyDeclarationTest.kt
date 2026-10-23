@@ -13,7 +13,8 @@ class DependencyDeclarationTest : BuildFileTestCase() {
             }
         """.trimIndent()
         val file = buildScript(script)
-        fun offset(gradlePath: String) = findDeclaration(file, ProjectNotation(gradlePath))?.textOffset
+        fun offset(gradlePath: String) =
+            findDeclaration(file, ProjectNotation(gradlePath))?.textOffset
 
         assertEquals(script.indexOf("project(", script.indexOf("fooBar")), offset(":core:foo"))
         assertEquals(script.indexOf("projects.core.fooBar"), offset(":core:foo-bar"))
@@ -31,11 +32,15 @@ class DependencyDeclarationTest : BuildFileTestCase() {
             }
         """.trimIndent()
         val file = buildScript(script)
-        fun offset(notation: DependencyNotation) = findDeclaration(file, notation)?.textOffset
+        fun offset(notation: DependencyNotation) =
+            findDeclaration(file, notation)?.textOffset
         val coroutines = AccessorNotation(listOf("libs", "kotlinx", "coroutines", "core"))
 
         assertEquals(script.indexOf("project("), offset(ProjectNotation(":unused")))
-        assertEquals(script.indexOf("\"org.example"), offset(CoordinatesNotation("org.example:lib")))
+        assertEquals(
+            script.indexOf("\"org.example"),
+            offset(CoordinatesNotation("org.example:lib")),
+        )
         assertEquals(script.indexOf("libs.kotlinx.coroutines.core)"), offset(coroutines))
         assertNull(offset(CoordinatesNotation("org.example:li")))
     }

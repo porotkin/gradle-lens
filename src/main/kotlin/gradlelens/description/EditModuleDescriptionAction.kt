@@ -26,13 +26,16 @@ class EditModuleDescriptionAction : DumbAwareAction() {
     }
 
     override fun actionPerformed(e: AnActionEvent) {
-        val project = e.project ?: return
-        val module = e.selectedModule() ?: return
+        val project = e.project
+            ?: return
+        val module = e.selectedModule()
+            ?: return
+
         val psiManager = PsiManager.getInstance(project)
-        val target = chooseDescriptionFile(
-            module.descriptionFilesByPrecedence()
-                .mapNotNull { psiManager.findFile(it)?.let(::descriptionFileOf) },
-        ) ?: return
+        val candidates = module.descriptionFilesByPrecedence()
+            .mapNotNull { psiManager.findFile(it)?.let(::descriptionFileOf) }
+        val target = chooseDescriptionFile(candidates)
+            ?: return
 
         val panel = NewItemSimplePopupPanel()
         val field = panel.textField.apply {
@@ -40,7 +43,11 @@ class EditModuleDescriptionAction : DumbAwareAction() {
             selectAll()
         }
 
-        val popup = NewItemPopupUtil.createNewItemPopup("Description of ${module.identityPath}", panel, field)
+        val popup = NewItemPopupUtil.createNewItemPopup(
+            "Description of ${module.identityPath}",
+            panel,
+            field,
+        )
         panel.setApplyAction { event ->
             popup.closeOk(event)
             saveDescription(project, module, target, field.text.trim().ifEmpty { null })
@@ -65,8 +72,12 @@ private fun GradleModule.descriptionFilesByPrecedence(): List<VirtualFile> {
         buildScript
             ?.takeIf { it.name.endsWith(GradleConstants.KOTLIN_DSL_SCRIPT_EXTENSION) }
             ?.let(fileSystem::findFileByIoFile),
-        if (isBuildRoot) null else fileSystem.findFileByPath(directory)
-            ?.findChild(GradleConstants.GRADLE_PROPERTIES_FILE_NAME),
+        if (isBuildRoot) {
+            null
+        } else {
+            fileSystem.findFileByPath(directory)
+                ?.findChild(GradleConstants.GRADLE_PROPERTIES_FILE_NAME)
+        },
     )
 }
 
@@ -76,14 +87,16 @@ private fun saveDescription(
     target: DescriptionFile,
     description: String?,
 ) {
-    if (description == module.description)
+    if (description == module.description) {
         return
+    }
 
     WriteCommandAction.writeCommandAction(project, target.psiFile)
         .withName("Edit Module Description")
         .run<RuntimeException> {
-            if (!target.psiFile.isValid)
+            if (!target.psiFile.isValid) {
                 return@run
+            }
 
             target.write(description)
 

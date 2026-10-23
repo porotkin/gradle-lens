@@ -102,7 +102,9 @@ class KotlinScriptDescriptionTest : BuildFileTestCase() {
         expected: String,
     ) {
         val file = buildScript(script.trimIndent())
-        WriteCommandAction.runWriteCommandAction(project) { KotlinScriptDescriptionFile(file).write(description) }
+        WriteCommandAction.runWriteCommandAction(project) {
+            KotlinScriptDescriptionFile(file).write(description)
+        }
         assertEquals(expected.trimIndent(), file.text)
     }
 }

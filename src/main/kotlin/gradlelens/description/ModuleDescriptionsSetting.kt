@@ -15,7 +15,11 @@ var moduleDescriptionsMode: ModuleDescriptionsMode
     get() = PropertiesComponent.getInstance().run {
         val stored = getValue(MODE_KEY)
         ModuleDescriptionsMode.entries.find { it.name == stored }
-            ?: if (getBoolean(LEGACY_ENABLED_KEY, true)) ModuleDescriptionsMode.ALL else ModuleDescriptionsMode.NONE
+            ?: if (getBoolean(LEGACY_ENABLED_KEY, true)) {
+                ModuleDescriptionsMode.ALL
+            } else {
+                ModuleDescriptionsMode.NONE
+            }
     }
     set(value) = PropertiesComponent.getInstance()
         .setValue(MODE_KEY, value.name)

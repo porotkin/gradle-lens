@@ -32,7 +32,8 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
                 "libs.example.lib Only imports GENERIC_ERROR_OR_WARNING",
             ),
             readFindings(script.virtualFile.parent).mapNotNull { finding ->
-                finding.declarationIn(script)?.let { "${it.text} ${finding.message} ${finding.issue.highlightType}" }
+                finding.declarationIn(script)
+                    ?.let { "${it.text} ${finding.message} ${finding.issue.highlightType}" }
             },
         )
     }

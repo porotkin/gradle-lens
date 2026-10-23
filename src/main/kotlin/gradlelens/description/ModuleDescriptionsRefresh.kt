@@ -61,16 +61,23 @@ class ProjectViewSelection(private val project: Project) : TreeSelectionListener
     }
 
     override fun valueChanged(e: TreeSelectionEvent) {
-        val tree = e.source as? JTree ?: return
+        val tree = e.source as? JTree
+            ?: return
+
         project.putUserData(
             SELECTED_FILES,
             tree.selectionPaths.orEmpty().mapNotNullTo(HashSet()) {
                 TreeUtil.getLastUserObject(ProjectViewNode::class.java, it)?.virtualFile
             },
         )
-        if (moduleDescriptionsMode != ModuleDescriptionsMode.SELECTED) return
 
-        val pane = ProjectView.getInstance(project).currentProjectViewPane ?: return
+        if (moduleDescriptionsMode != ModuleDescriptionsMode.SELECTED) {
+            return
+        }
+
+        val pane = ProjectView.getInstance(project).currentProjectViewPane
+            ?: return
+
         for (path in e.paths) {
             pane.updateFrom(path, false, false)
         }

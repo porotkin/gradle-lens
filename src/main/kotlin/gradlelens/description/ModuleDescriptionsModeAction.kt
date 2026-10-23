@@ -24,8 +24,11 @@ sealed class ModuleDescriptionsModeAction(
     }
 }
 
-class ShowAllModuleDescriptionsAction : ModuleDescriptionsModeAction(ModuleDescriptionsMode.ALL)
+class ShowAllModuleDescriptionsAction :
+    ModuleDescriptionsModeAction(ModuleDescriptionsMode.ALL)
 
-class ShowSelectedModuleDescriptionsAction : ModuleDescriptionsModeAction(ModuleDescriptionsMode.SELECTED)
+class ShowSelectedModuleDescriptionsAction :
+    ModuleDescriptionsModeAction(ModuleDescriptionsMode.SELECTED)
 
-class HideModuleDescriptionsAction : ModuleDescriptionsModeAction(ModuleDescriptionsMode.NONE)
+class HideModuleDescriptionsAction :
+    ModuleDescriptionsModeAction(ModuleDescriptionsMode.NONE)

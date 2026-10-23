@@ -17,15 +17,31 @@ class DependencyLensInspection : LocalInspectionTool() {
         manager: InspectionManager,
         isOnTheFly: Boolean,
     ): Array<ProblemDescriptor>? {
-        val buildScript = file.virtualFile ?: return null
-        if (file !is KtFile || !file.project.service<LocalGradleModel>().modules.isBuildScript(buildScript)) return null
-        return readFindings(buildScript.parent).mapNotNull { finding ->
-            finding.declarationIn(file)?.let {
-                manager.createProblemDescriptor(
-                    it, finding.message, isOnTheFly, LocalQuickFix.EMPTY_ARRAY, finding.issue.highlightType,
-                )
-            }
-        }.toTypedArray()
+        val buildScript = file.virtualFile
+            ?: return null
+
+        if (file !is KtFile) {
+            return null
+        }
+
+        if (!file.project.service<LocalGradleModel>().modules.isBuildScript(buildScript)) {
+            return null
+        }
+
+        val findings = readFindings(buildScript.parent)
+            .mapNotNull { finding ->
+                finding.declarationIn(file)?.let {
+                    manager.createProblemDescriptor(
+                        it,
+                        finding.message,
+                        isOnTheFly,
+                        LocalQuickFix.EMPTY_ARRAY,
+                        finding.issue.highlightType,
+                    )
+                }
+            }.toTypedArray()
+
+        return findings
     }
 }
 

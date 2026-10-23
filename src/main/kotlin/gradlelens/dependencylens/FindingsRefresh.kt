@@ -18,9 +18,15 @@ class RefreshFindingsAfterGradleTask : ExternalSystemTaskNotificationListener {
         projectPath: String,
         id: ExternalSystemTaskId,
     ) {
-        if (id.type != ExternalSystemTaskType.EXECUTE_TASK) return
-        val project = id.findProject() ?: return
-        val reports = project.service<LocalGradleModel>().modules.directories.map { Path.of(it, FINDINGS_DIRECTORY) }
+        if (id.type != ExternalSystemTaskType.EXECUTE_TASK) {
+            return
+        }
+
+        val project = id.findProject()
+            ?: return
+
+        val reports = project.service<LocalGradleModel>().modules.directories
+            .map { Path.of(it, FINDINGS_DIRECTORY) }
         VfsUtil.markDirtyAndRefresh(true, true, true, *reports.toTypedArray())
     }
 }
