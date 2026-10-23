@@ -10,7 +10,6 @@ import com.intellij.driver.sdk.ui.components.UiComponent
 import com.intellij.driver.sdk.ui.components.UiComponent.Companion.waitFound
 import com.intellij.driver.sdk.ui.components.common.IdeaFrameUI
 import com.intellij.driver.sdk.ui.components.common.codeEditor
-import com.intellij.driver.sdk.ui.components.common.ideFrame
 import com.intellij.driver.sdk.ui.components.common.popups.documentationHintEditorPane
 import com.intellij.driver.sdk.ui.components.common.toolwindows.projectView
 import com.intellij.driver.sdk.ui.components.elements.PopupItemUiComponent
@@ -18,20 +17,8 @@ import com.intellij.driver.sdk.ui.components.elements.popupMenu
 import com.intellij.driver.sdk.ui.keyboard.RemoteKeyboard
 import com.intellij.driver.sdk.ui.ui
 import com.intellij.driver.sdk.waitFor
-import com.intellij.ide.starter.driver.engine.runIdeWithDriver
-import com.intellij.ide.starter.ide.IDETestContext
-import com.intellij.ide.starter.models.IDEStartResult
-import com.intellij.ide.starter.models.IdeInfo
-import com.intellij.ide.starter.models.TestCase
-import com.intellij.ide.starter.plugins.PluginConfigurator
-import com.intellij.ide.starter.project.LocalProjectInfo
-import com.intellij.ide.starter.report.Error
-import com.intellij.ide.starter.report.ErrorReporterToCI
-import com.intellij.ide.starter.runner.Starter
-import com.intellij.tools.ide.starter.product.idea.ultimate.IdeaUltimate
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.*
 import kotlin.time.Duration.Companion.minutes
@@ -256,30 +243,7 @@ private interface ProjectView {
 }
 
 private fun multiModuleProject(): Path =
-    createTempDirectory("gradle-lens-integration-test").toRealPath().also {
-        File("src/integrationTest/projects/multi-module").copyRecursively(it.toFile())
-    }
-
-private fun ideContext(testName: String, project: Path): IDETestContext =
-    Starter.newContext(
-        testName,
-        TestCase(IdeInfo.IdeaUltimate, LocalProjectInfo(project))
-            .withVersion(IntegrationTestIde.VERSION),
-    ).apply {
-        PluginConfigurator(this)
-            .installPluginFromPath(Path(System.getProperty("path.to.build.plugin")))
-    }
-
-private fun IDETestContext.runInIde(actions: IdeaFrameUI.() -> Unit) {
-    val result = runIdeWithDriver().useDriverAndCloseIde {
-        ideFrame {
-            waitForIndicators(5.minutes)
-            actions()
-        }
-    }
-
-    assertEquals(emptyList<Error>(), pluginErrorsIn(result))
-}
+    fixtureProject("multi-module")
 
 private fun runInMultiModuleProject(
     testName: String,
@@ -343,7 +307,3 @@ private fun IdeaFrameUI.textAtCaret(): String =
 
 private fun UiComponent.waitNoTextsContain(text: String) =
     waitFor("No texts containing '$text' in $this", timeout = 15.seconds) { !hasSubtext(text) }
-
-private fun pluginErrorsIn(result: IDEStartResult): List<Error> =
-    ErrorReporterToCI.collectErrors(result.runContext.logsDir)
-        .filter { "gradlelens." in it.stackTraceContent }
