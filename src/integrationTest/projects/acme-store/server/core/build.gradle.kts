@@ -5,5 +5,5 @@ plugins {
 description = "Server core"
 
 dependencies {
-    implementation("common:core")
+    implementation(commonLibs.core)
 }

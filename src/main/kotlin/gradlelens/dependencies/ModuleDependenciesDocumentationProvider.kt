@@ -7,6 +7,7 @@ import com.intellij.openapi.application.ModalityState
 import com.intellij.openapi.application.ReadAction
 import com.intellij.openapi.components.service
 import com.intellij.openapi.fileEditor.OpenFileDescriptor
+import com.intellij.openapi.module.ModuleUtilCore
 import com.intellij.openapi.vfs.LocalFileSystem
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiDirectory
@@ -16,6 +17,8 @@ import com.intellij.util.concurrency.AppExecutorUtil
 import gradlelens.model.GradleModule
 import gradlelens.model.LocalGradleModel
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.plugins.gradle.service.resolve.getVersionCatalogFiles
+import org.toml.lang.psi.TomlFile
 
 class ModuleDependenciesDocumentationProvider :
     DocumentationProvider,
@@ -88,7 +91,19 @@ private fun declarationOffset(
     buildScript: VirtualFile,
     module: GradleModule,
     dependent: GradleModule,
-): Int? =
-    (psiManager.findFile(buildScript) as? KtFile)
-        ?.let { findDeclaration(it, declarationNotations(module, dependent)) }
+): Int? {
+    val script = psiManager.findFile(buildScript) as? KtFile
+        ?: return null
+
+    return findDeclaration(script, declarationNotations(module, dependent, versionCatalogs(script)))
         ?.textOffset
+}
+
+private fun versionCatalogs(script: KtFile): Map<String, TomlFile> {
+    val module = ModuleUtilCore.findModuleForFile(script)
+        ?: return emptyMap()
+
+    return getVersionCatalogFiles(module)
+        .mapNotNull { (name, file) -> (script.manager.findFile(file) as? TomlFile)?.let { name to it } }
+        .toMap()
+}

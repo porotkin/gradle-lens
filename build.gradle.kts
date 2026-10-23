@@ -8,8 +8,10 @@ dependencies {
         intellijIdea(libs.versions.intellijIdea)
 
         bundledPlugin("com.intellij.gradle")
+        bundledPlugin("org.jetbrains.plugins.gradle")
         bundledPlugin("org.jetbrains.kotlin")
         bundledPlugin("com.intellij.properties")
+        bundledPlugin("org.toml.lang")
     }
 }
 

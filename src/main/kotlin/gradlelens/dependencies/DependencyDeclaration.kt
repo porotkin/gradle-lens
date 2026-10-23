@@ -6,6 +6,7 @@ import gradlelens.calleeName
 import gradlelens.model.GradleModule
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.plainContent
+import org.toml.lang.psi.TomlFile
 
 sealed interface DependencyNotation {
     fun matches(element: PsiElement): Boolean
@@ -46,12 +47,21 @@ fun findDeclaration(
 fun declarationNotations(
     module: GradleModule,
     dependent: GradleModule,
+    catalogs: Map<String, TomlFile>,
 ): List<DependencyNotation> =
     if (module.buildPath == dependent.buildPath) {
         listOf(ProjectNotation(module.path))
     } else {
-        listOfNotNull(module.coordinates?.let(::CoordinatesNotation))
+        module.coordinates
+            ?.let { coordinates ->
+                listOf(CoordinatesNotation(coordinates)) +
+                        catalogs.flatMap { (name, catalog) -> libraryAccessors(name, catalog, coordinates) }
+            }
+            .orEmpty()
     }
+
+internal fun String.isCoordinatesOf(module: String): Boolean =
+    this == module || startsWith("$module:")
 
 private fun PsiElement.isProjectCall(gradlePath: String): Boolean =
     this is KtCallExpression && calleeName() == "project" && firstStringArgument() == gradlePath
@@ -60,8 +70,7 @@ private fun PsiElement.isAccessor(accessor: List<String>): Boolean =
     this is KtDotQualifiedExpression && names() == accessor && !isReceiver()
 
 private fun PsiElement.isCoordinates(module: String): Boolean =
-    this is KtStringTemplateExpression &&
-            plainContent.let { it == module || it.startsWith("$module:") }
+    this is KtStringTemplateExpression && plainContent.isCoordinatesOf(module)
 
 private fun KtCallExpression.firstStringArgument(): String? =
     (valueArguments.firstOrNull()?.getArgumentExpression() as? KtStringTemplateExpression)
