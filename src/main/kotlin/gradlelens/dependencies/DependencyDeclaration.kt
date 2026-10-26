@@ -15,9 +15,6 @@ sealed interface DependencyNotation {
 data class ProjectNotation(val gradlePath: String) : DependencyNotation {
     private val accessor = projectAccessor(gradlePath)
 
-    val name: String
-        get() = gradlePath.substringAfterLast(':')
-
     override fun matches(element: PsiElement): Boolean =
         element.isProjectCall(gradlePath) || element.isAccessor(accessor)
 }

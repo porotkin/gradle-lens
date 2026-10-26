@@ -15,18 +15,16 @@ const val FINDINGS_DIRECTORY = "$BUILD_DIRECTORY/dependency-lens"
 
 enum class Issue(
     val title: String,
-    val declarationTitle: String,
     val highlightType: ProblemHighlightType,
 ) {
-    UNUSED("Unused", "Unused dependency", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
-    UNUSED_API("Unused, but exported as api", "Unused api dependency", ProblemHighlightType.WEAK_WARNING),
-    IMPORTS_ONLY("Used only by imports", "Used only by imports", ProblemHighlightType.GENERIC_ERROR_OR_WARNING),
-    UNDECLARED("Not declared", "Undeclared dependencies come through here", ProblemHighlightType.WEAK_WARNING),
+    UNUSED("Unused dependency", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
+    UNUSED_API("Unused api dependency", ProblemHighlightType.WEAK_WARNING),
+    IMPORTS_ONLY("Used only by imports", ProblemHighlightType.GENERIC_ERROR_OR_WARNING),
+    UNDECLARED("Undeclared dependencies come through here", ProblemHighlightType.WEAK_WARNING),
 }
 
 class Finding(
     val issue: Issue,
-    val classpath: String,
     val dependency: DependencyNotation,
     val declarations: List<DependencyNotation>,
     val message: String,
@@ -53,7 +51,6 @@ private fun parseFinding(line: String): Finding? {
 
     return Finding(
         issue,
-        columns[1],
         parseNotation(columns[2]),
         columns[3].split(',').map(::parseNotation),
         columns[4],

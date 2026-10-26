@@ -19,6 +19,4 @@ where it declares the dependency. In a composite build this includes modules of 
 coordinates (`"group:name"`) or by a version catalog entry for them.
 
 Unused and undeclared dependencies found by [Dependency Lens](https://github.com/porotkin/dependency-lens) are marked
-where `build.gradle.kts` declares them, and as warnings in the IntelliJ IDEA
-[Gradle Dependency Analyzer](https://www.jetbrains.com/help/idea/work-with-gradle-dependency-diagram.html#dependency_analyzer).
-Run `./gradlew dependencyLens` to update them.
+where `build.gradle.kts` declares them. Run `./gradlew dependencyLens` to update them.

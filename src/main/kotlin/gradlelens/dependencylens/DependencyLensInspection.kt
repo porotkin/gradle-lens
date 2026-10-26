@@ -81,7 +81,7 @@ private fun Issue.describe(findings: List<Finding>): String {
         .wrapWith(HtmlChunk.ul())
 
     return HtmlBuilder()
-        .append(HtmlChunk.text(declarationTitle).bold())
+        .append(HtmlChunk.text(title).bold())
         .append(": ")
         .append(messages)
         .wrapWith(HtmlChunk.html())
