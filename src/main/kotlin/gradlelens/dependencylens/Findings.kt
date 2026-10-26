@@ -19,6 +19,7 @@ enum class Issue(
     val highlightType: ProblemHighlightType,
 ) {
     UNUSED("Unused", "Unused dependency", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
+    UNUSED_API("Unused, but exported as api", "Unused api dependency", ProblemHighlightType.WEAK_WARNING),
     IMPORTS_ONLY("Used only by imports", "Used only by imports", ProblemHighlightType.GENERIC_ERROR_OR_WARNING),
     UNDECLARED("Not declared", "Undeclared dependencies come through here", ProblemHighlightType.WEAK_WARNING),
 }

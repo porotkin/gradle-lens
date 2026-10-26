@@ -14,6 +14,7 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
                 """jsMainImplementation(project(":facade")) <html><b>Undeclared dependencies come through here</b>: <ul><li>Comes through</li> <li>Used in &lt;opt-in&gt;</li></ul></html> WEAK_WARNING []""",
                 "jsMainImplementation(libs.example.lib) <html><b>Used only by imports</b>: <ul><li>Only imports</li></ul></html> GENERIC_ERROR_OR_WARNING []",
                 """jsMainImplementation(project(":facade")) <html><b>Unused dependency</b>: <ul><li>Declare :exposed instead</li></ul></html> LIKE_UNUSED_SYMBOL []""",
+                """jsMainApi(project(":exported")) <html><b>Unused api dependency</b>: <ul><li>Check consumers</li></ul></html> WEAK_WARNING []""",
             ),
             reportedProblems().map { problem ->
                 val fixes = problem.fixes.orEmpty().map { it.familyName }
@@ -32,6 +33,7 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
             dependencies {
                 jsMainImplementation(project(":facade"))
                 jsMainImplementation(libs.example.lib)
+                jsMainApi(project(":exported"))
             }
             """.trimIndent(),
         )
@@ -48,6 +50,7 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
             UNUSED	jsCompileClasspath	project :facade	project :facade	Declare :exposed instead
             UNDECLARED	jsCompileClasspath	project :hidden	project :facade	Used in <opt-in>
             UNDECLARED	jsTestCompileClasspath	project :exposed	project :facade	Comes through
+            UNUSED_API	jsCompileClasspath	project :exported	project :exported	Check consumers
             UNUSED	jsCompileClasspath	project :gone	project :gone	Not declared here
             ANALYSIS_FAILED	jsCompileClasspath	project :unused	project :unused	Unknown issue
             """.trimIndent(),
@@ -58,6 +61,7 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
                 jsMainImplementation(project(":unused"))
                 jsMainImplementation(project(":facade"))
                 jsMainImplementation(libs.example.lib)
+                jsMainApi(project(":exported"))
             }
             """.trimIndent(),
         )
