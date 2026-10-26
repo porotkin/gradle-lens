@@ -8,6 +8,8 @@ import com.intellij.modcommand.ModPsiUpdater
 import com.intellij.modcommand.PsiUpdateModCommandQuickFix
 import com.intellij.openapi.components.service
 import com.intellij.openapi.project.Project
+import com.intellij.openapi.util.text.HtmlBuilder
+import com.intellij.openapi.util.text.HtmlChunk
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
 import gradlelens.dependencies.DependencyNotation
@@ -48,24 +50,49 @@ fun List<Finding>.problemsIn(
     val undeclaredRoutes = filter { it.issue == Issue.UNDECLARED }
         .flatMapTo(HashSet()) { it.declarations }
 
-    return mapNotNull { finding ->
-        findDeclaration(script, finding.declarations)?.let {
-            manager.createProblemDescriptor(
-                it.statement(),
-                finding.message,
-                isOnTheFly,
-                finding.fixes(undeclaredRoutes),
-                finding.issue.highlightType,
-            )
+    return groupBy { it.markIn(script) }
+        .mapNotNull { (mark, findings) ->
+            mark?.let {
+                manager.createProblemDescriptor(
+                    it.statement,
+                    it.issue.describe(findings),
+                    isOnTheFly,
+                    it.issue.fixes(findings, undeclaredRoutes),
+                    it.issue.highlightType,
+                )
+            }
         }
-    }
 }
+
+private data class Mark(
+    val statement: PsiElement,
+    val issue: Issue,
+)
+
+private fun Finding.markIn(script: KtFile): Mark? =
+    findDeclaration(script, declarations)?.let { Mark(it.statement(), issue) }
 
 private fun PsiElement.statement(): PsiElement =
     parentsWithSelf.first { it.parent is KtBlockExpression }
 
-private fun Finding.fixes(undeclaredRoutes: Set<DependencyNotation>): Array<LocalQuickFix> =
-    if (issue == Issue.UNUSED && dependency !in undeclaredRoutes) {
+private fun Issue.describe(findings: List<Finding>): String {
+    val messages = HtmlBuilder()
+        .appendWithSeparators(HtmlChunk.text(" "), findings.map { it.message }.distinct().map { HtmlChunk.li().addText(it) })
+        .wrapWith(HtmlChunk.ul())
+
+    return HtmlBuilder()
+        .append(HtmlChunk.text(declarationTitle).bold())
+        .append(": ")
+        .append(messages)
+        .wrapWith(HtmlChunk.html())
+        .toString()
+}
+
+private fun Issue.fixes(
+    findings: List<Finding>,
+    undeclaredRoutes: Set<DependencyNotation>,
+): Array<LocalQuickFix> =
+    if (this == Issue.UNUSED && findings.none { it.dependency in undeclaredRoutes }) {
         arrayOf(RemoveDependency())
     } else {
         LocalQuickFix.EMPTY_ARRAY

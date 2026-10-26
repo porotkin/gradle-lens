@@ -23,7 +23,7 @@ class DependencyLensTest {
             driver.openFile("app/build.gradle.kts", waitForCodeAnalysis = false)
             runGradle(project, "dependencyLens")
             waitFor("Dependency Lens finding on project(\":unused\")", timeout = 5.minutes) {
-                ("project(\":unused\")" to "Not needed to compile :app js/main") in highlights()
+                ("implementation(project(\":unused\"))" to "Unused dependency: Not needed to compile :app js/main") in highlights()
             }
         }
     }

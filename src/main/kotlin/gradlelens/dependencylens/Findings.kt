@@ -15,11 +15,12 @@ const val FINDINGS_DIRECTORY = "$BUILD_DIRECTORY/dependency-lens"
 
 enum class Issue(
     val title: String,
+    val declarationTitle: String,
     val highlightType: ProblemHighlightType,
 ) {
-    UNUSED("Unused", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
-    IMPORTS_ONLY("Used only by imports", ProblemHighlightType.GENERIC_ERROR_OR_WARNING),
-    UNDECLARED("Not declared", ProblemHighlightType.WEAK_WARNING),
+    UNUSED("Unused", "Unused dependency", ProblemHighlightType.LIKE_UNUSED_SYMBOL),
+    IMPORTS_ONLY("Used only by imports", "Used only by imports", ProblemHighlightType.GENERIC_ERROR_OR_WARNING),
+    UNDECLARED("Not declared", "Undeclared dependencies come through here", ProblemHighlightType.WEAK_WARNING),
 }
 
 class Finding(

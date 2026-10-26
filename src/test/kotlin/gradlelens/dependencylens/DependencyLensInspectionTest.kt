@@ -10,10 +10,10 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
     fun testMarksReportedDeclarations() {
         assertEquals(
             listOf(
-                """jsMainImplementation(project(":unused")) Not needed LIKE_UNUSED_SYMBOL [Remove dependency]""",
-                """jsMainImplementation(project(":facade")) Comes through WEAK_WARNING []""",
-                "jsMainImplementation(libs.example.lib) Only imports GENERIC_ERROR_OR_WARNING []",
-                """jsMainImplementation(project(":facade")) Declare :exposed instead LIKE_UNUSED_SYMBOL []""",
+                """jsMainImplementation(project(":unused")) <html><b>Unused dependency</b>: <ul><li>Not needed</li></ul></html> LIKE_UNUSED_SYMBOL [Remove dependency]""",
+                """jsMainImplementation(project(":facade")) <html><b>Undeclared dependencies come through here</b>: <ul><li>Comes through</li> <li>Used in &lt;opt-in&gt;</li></ul></html> WEAK_WARNING []""",
+                "jsMainImplementation(libs.example.lib) <html><b>Used only by imports</b>: <ul><li>Only imports</li></ul></html> GENERIC_ERROR_OR_WARNING []",
+                """jsMainImplementation(project(":facade")) <html><b>Unused dependency</b>: <ul><li>Declare :exposed instead</li></ul></html> LIKE_UNUSED_SYMBOL []""",
             ),
             reportedProblems().map { problem ->
                 val fixes = problem.fixes.orEmpty().map { it.familyName }
@@ -46,6 +46,8 @@ class DependencyLensInspectionTest : BuildFileTestCase() {
             UNDECLARED	jsCompileClasspath	project :exposed	project :facade	Comes through
             IMPORTS_ONLY	jsCompileClasspath	org.example:lib	org.example:lib,libs.example.lib	Only imports
             UNUSED	jsCompileClasspath	project :facade	project :facade	Declare :exposed instead
+            UNDECLARED	jsCompileClasspath	project :hidden	project :facade	Used in <opt-in>
+            UNDECLARED	jsTestCompileClasspath	project :exposed	project :facade	Comes through
             UNUSED	jsCompileClasspath	project :gone	project :gone	Not declared here
             ANALYSIS_FAILED	jsCompileClasspath	project :unused	project :unused	Unknown issue
             """.trimIndent(),
