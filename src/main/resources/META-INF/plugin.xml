@@ -30,16 +30,15 @@
 
     <change-notes><![CDATA[
         <ul>
-            <li>New: unused and undeclared dependencies reported by
-                <a href="https://github.com/porotkin/dependency-lens">Dependency Lens</a> are marked in
-                <code>build.gradle.kts</code> and in the IntelliJ IDEA
-                <a href="https://www.jetbrains.com/help/idea/work-with-gradle-dependency-diagram.html#dependency_analyzer">Gradle
-                    Dependency Analyzer</a>.
+            <li>New: <b>Remove dependency</b> quick-fix for an unused dependency reported by
+                <a href="https://github.com/porotkin/dependency-lens">Dependency Lens</a>.
             </li>
-            <li><b>Quick Documentation</b> on a module folder now also lists dependents in other builds of a composite
-                build that declare the module by coordinates or a version catalog entry.
+            <li>New: unused <code>api</code> dependencies are marked too, as a weak warning, since consumers may still
+                need them.
             </li>
-            <li><b>Edit Module Description…</b> shortcut is now <b>Shift+Enter</b>.</li>
+            <li>Dependency Lens findings now mark the whole declaration, with one tooltip per issue that lists each
+                finding on its own line.
+            </li>
         </ul>
         ]]></change-notes>
 
